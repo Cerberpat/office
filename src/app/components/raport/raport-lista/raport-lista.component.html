@@ -1,0 +1,33 @@
+<p-table [value]="Users" [autoLayout]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th colspan="4">{{receivedCurrentDate | date:'yyyy-MM-dd'}}</th>
+    </tr>
+    <tr>
+      <th>Dodano</th>
+      <th>Opis</th>
+      <th class="godziny">Godziny</th>
+      <th>Menu</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-user>
+    <tr *ngIf="logedUser.dostep == 1" (click)="toggleClass($event, 'user-' + user.id);">
+      <th colspan="4" class="user-row" class="pending" *ngIf="user.hours == 0">{{user.imie}} {{user.nazwisko}}</th>
+      <th colspan="4" class="user-row" class="progress" *ngIf="user.hours > 0 && user.hours < 8">{{user.imie}} {{user.nazwisko}}</th>
+      <th colspan="4" class="user-row" class="complete" *ngIf="user.hours >= 8">{{user.imie}} {{user.nazwisko}}</th>
+    </tr>
+    <tr *ngFor="let rec of user.records;" class="user-{{user.id}}">
+      <td>{{rec.czasDodania.substr(11)}}</td>
+      <td>{{rec.opis}}</td>
+      <td>{{rec.iloscGodzin}}</td>
+      <td>
+        <i *ngIf="logedUser.id == rec.dodal" class="pi pi-minus-circle" (click)="deleteRaport(rec.id)"></i>
+        <i *ngIf="logedUser.id == rec.dodal" class="pi pi-pencil" (click)="editRaport(rec.id)"></i>
+      </td>
+    </tr>
+    <tr *ngIf="logedUser.id == user.id || logedUser.dostep == 1">
+      <td colspan="2" class="a-r">TOTAL: </td>
+      <td colspan="2" class="a-l">{{user.hours}}</td>
+    </tr>
+  </ng-template>
+</p-table>

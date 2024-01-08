@@ -1,0 +1,35 @@
+<p-table #dt [columns]="this.cols" [value]="profiles" dataKey="id" [paginator]="true" [rows]="this.filters.perPage" [autoLayout]="true">
+  <ng-template pTemplate="caption">
+    <div style="position: relative; min-height: 2.4em">
+      <div style="position: absolute; left: 0px; top: 0px;">
+        <button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-success" (click)="addRow()"></button>
+      </div>
+      <div style="position: absolute; right: 0px; top: 0px;">
+        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 100px;"><input pInputText style="width: 50px;" type="number" [(ngModel)]="this.filters.perPage" [min]="0" [step]="1" required></th>
+      <th>Pracownik</th>
+      <th style="width: 100px;"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-profil let-i="rowIndex">
+    <tr>
+      <td>{{i+1}}</td>
+      <td>{{profil.nazwisko}} {{profil.imie}}</td>
+      <td>
+        <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="editRow(profil)"></button>
+        <button pButton type="button" icon="pi pi-key" class="ui-button-warning" style="margin-left: 5px;" (click)="resetHasla(profil)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="7">Nie znaleziono pracownika.</td>
+    </tr>
+  </ng-template>
+</p-table>

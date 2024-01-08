@@ -1,0 +1,7 @@
+{
+"/api/*": {
+  "target": "https://office.next77.pl/RestApi",
+  "secure": true,
+  "changeOrigin": true
+}
+}

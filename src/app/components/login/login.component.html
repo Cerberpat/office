@@ -1,0 +1,9 @@
+<H1>LOGOWANIE</H1>
+<input id="login" type="text" size="30" pInputText [(ngModel)]="userLogin.login" placeholder="Login">
+<br />
+<br />
+<input id="haslo" type="password" size="30" pInputText [(ngModel)]="userLogin.haslo" placeholder="Hasło">
+<br />
+<br />
+<button pButton type="submit" label="Zaloguj" class="ui-button-rounded" style="margin-top: 2px;" (click)="login()"></button>
+

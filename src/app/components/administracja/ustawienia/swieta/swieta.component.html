@@ -1,0 +1,60 @@
+<p-fieldset legend="Święta" [toggleable]="true" [collapsed]=true>
+  <p-table #dt [columns]="colsSwieta" [value]="swieta" dataKey="id" editMode="row" [paginator]="true" [rows]="perPage">
+    <ng-template pTemplate="caption">
+      <div style="position: relative; min-height: 2.4em">
+        <div style="position: absolute; left: 0px; top: 0px;">
+          <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+          <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="perPage" [min]="0" [step]="1" required></th>
+        <th *ngFor="let col of columns">
+          {{col.header}}
+        </th>
+        <th style="width:8em"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+      <tr [pEditableRow]="rowData">
+        <td>{{ri+1}}</td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="swietaDates" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="rowData.data" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.data}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="rowData.nazwa" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.nazwa}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td style="text-align:center">
+          <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="ui-button-info" (click)="onRowEditInitSwieto(rowData)"></button>
+          <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSaveSwieto(rowData)"></button>
+          <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="onRowEditCancelSwieto(rowData, ri)"></button>
+          <button *ngIf="!editing" style="margin-left: 7px;" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="deleteSwieto(rowData)"></button>
+        </td>
+      </tr>
+      <tr *ngIf="swieta.length==(ri+1)">
+        <td></td>
+        <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="swietaDates" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="addSwietoObj.data" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+        <td><input [style]="{'width':'100%'}" pInputText type="text" [(ngModel)]="addSwietoObj.nazwa" required></td>
+        <td>
+          <button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-warning" (click)="addSwieto();"></button></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+<p-confirmDialog></p-confirmDialog>

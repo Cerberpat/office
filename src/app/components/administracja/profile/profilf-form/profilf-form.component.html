@@ -1,0 +1,42 @@
+<p-table [value]="[{}]">
+  <ng-template pTemplate="body">
+    <tr>
+      <th style="width: 10%;padding: 5px;">Login</th>
+      <th style="width: 40%;padding: 5px;"><input pInputText style="width: 100%;" type="text" [(ngModel)]="this.profil.login" required></th>
+      <th style="width: 10%;">Hasło</th>
+      <th style="width: 40%;"><input pInputText style="width: 100%;" type="password" [(ngModel)]="this.profil.haslo" required></th>
+    </tr>
+    <tr>
+      <th style="padding: 5px;">Imię</th>
+
+      <th style="padding: 5px;"><input pInputText style="width: 100%;" type="text" [(ngModel)]="this.profil.imie" required></th>
+      <th style="padding: 5px;">Nazwisko</th>
+      <th style="padding: 5px;"><input pInputText style="width: 100%;" type="text" [(ngModel)]="this.profil.nazwisko" required></th>
+    </tr>
+    <tr>
+      <th style="width: 10%;">Mail</th>
+      <th style="width: 40%;"><input pInputText style="width: 100%;" type="email" [(ngModel)]="this.profil.mail" required></th>
+      <th colspan="2"></th>
+    </tr>
+    <tr>
+      <th style="padding: 5px;">Aktywność</th>
+      <th style="padding: 5px;"><p-dropdown [style]="{'width':'100%'}" [options]="aktywnySelOpt" [(ngModel)]="this.profil.aktywnosc" appendTo="body"></p-dropdown></th>
+      <th style="padding: 5px;">Dostęp</th>
+      <th style="padding: 5px;"><p-dropdown [style]="{'width':'100%'}" [options]="dostepSelOpt" [(ngModel)]="this.profil.dostep" appendTo="body"></p-dropdown></th>
+    </tr>
+    <tr>
+      <th colspan="2"></th>
+      <th colspan="2" style="padding: 5px;"><button pButton style="width: 100%;" label="Zapisz" type="button" class="ui-button-success" (click)="zapisz()"></button></th>
+    </tr>
+  </ng-template>
+</p-table>
+<p-dialog [(visible)]="display">
+  <p-header>
+    Komunikat systemu
+  </p-header>
+  <p [innerHTML]="dialogMessage"></p>
+  <p-footer>
+    <button pButton pRipple type="button" label="Zamknij" class="p-button-warning float-r" (click)="closeDialog()"></button>
+  </p-footer>
+</p-dialog>
+

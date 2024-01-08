@@ -1,0 +1,210 @@
+<p-toast></p-toast>
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane ogólne" leftIcon="pi pi-id-card" headerStyleClass="dane-ogolne">
+      <p-table [value]="[wholeseller]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td colspan="4" class="bold center belka">Identyfikatory</td>
+          </tr>
+          <tr>
+            <td class="bold right">Nazwa</td>
+            <td><input pInputText id="name" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('name')"
+                                  [(ngModel)]="wholeseller.name"
+                                  [pTooltip]="getErrorMessage('name')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Login</td>
+            <td><input pInputText id="login" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('login')"
+                                  [(ngModel)]="wholeseller.login"
+                                  [pTooltip]="getErrorMessage('login')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">Adres rejestracji</td>
+          </tr>
+          <tr>
+            <td class="bold right">Adres</td>
+            <td><input pInputText id="street" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('street')"
+                                  [(ngModel)]="wholeseller.registrationAddress.street"
+                                  [pTooltip]="getErrorMessage('street')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Nr. budynku:</td>
+            <td colspan=""><input pInputText id="buildting" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('buildting')"
+                                  [(ngModel)]="wholeseller.registrationAddress.buildingNumber"
+                                  [pTooltip]="getErrorMessage('buildting')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Nr. mieszkania:</td>
+            <td><input pInputText id="apartment" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                       (keyup)="validField('apartment')"
+                       [(ngModel)]="wholeseller.registrationAddress.apartmentNumber"
+                       [pTooltip]="getErrorMessage('apartment')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Miejscowość</td>
+            <td colspan=""><input pInputText id="city" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('city')"
+                                  [(ngModel)]="wholeseller.registrationAddress.city"
+                                  [pTooltip]="getErrorMessage('city')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Kod pocztowy</td>
+            <td><input pInputText id="zipCode" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('zipCode')"
+                                  [(ngModel)]="wholeseller.registrationAddress.zipCode"
+                                  [pTooltip]="getErrorMessage('zipCode')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Kraj</td>
+            <td><p-dropdown appendTo="body" id="country" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="validField('country')"
+                            [options]="countries"
+                            [(ngModel)]="wholeseller.registrationAddress.countryId"
+                            [pTooltip]="getErrorMessage('country')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Nip</td>
+            <td><input pInputText id="nip" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('nip')"
+                                  [(ngModel)]="wholeseller.registrationAddress.nip"
+                                  [pTooltip]="getErrorMessage('nip')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">Mailing automatyczny</td>
+          </tr>
+          <tr>
+            <td class="bold right">Zgoda na mailing automatyczny</td>
+            <td><p-dropdown appendTo="body" id="mailingAgree" [style]="{'width':'100%'}"
+                          (onChange)="validField('mailingAgree')"
+                          [options]="taknieOptions"
+                          [(ngModel)]="wholeseller.mailingAgree"
+                          [pTooltip]="getErrorMessage('mailingAgree')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Adres mail dla automatu</td>
+            <td><input pInputText id="mailAuto" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('mailAuto')"
+                                  [(ngModel)]="wholeseller.mailAuto"
+                                  [pTooltip]="getErrorMessage('mailAuto')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">Ustawienia konta</td>
+          </tr>
+          <tr>
+            <td class="bold right">Forma płatności</td>
+            <td><p-dropdown appendTo="body" id="paymentForm" [style]="{'width':'100%'}" [showClear]="false" filter="true"
+                          (onChange)="validField('paymentForm')"
+                          [options]="paymentForms"
+                          [(ngModel)]="wholeseller.paymentFormId"
+                          [pTooltip]="getErrorMessage('paymentForm')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Waluta</td>
+            <td><p-dropdown appendTo="body" id="currency" [style]="{'width':'100%'}" [showClear]="false" filter="false"
+                            (onChange)="validField('currency')"
+                            [options]="exchange"
+                            [(ngModel)]="wholeseller.currency"
+                            [pTooltip]="getErrorMessage('currency')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Blokuj po terminie</td>
+            <td><p-dropdown appendTo="body" id="invoiceTermBlock" [style]="{'width':'100%'}"
+                          (onChange)="validField('invoiceTermBlock')"
+                          [options]="taknieOptions"
+                          [(ngModel)]="wholeseller.invoiceTermBlock"
+                          [pTooltip]="getErrorMessage('invoiceTermBlock')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Problemy z płatnościami</td>
+            <td><p-dropdown appendTo="body" id="paymentAlert" [style]="{'width':'100%'}"
+                            (onChange)="validField('paymentAlert')"
+                            [options]="taknieOptions"
+                            [(ngModel)]="wholeseller.paymentAlert"
+                            [pTooltip]="getErrorMessage('paymentAlert')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Termin płatności</td>
+            <td><input pInputText id="paymentTerm" style="width: 100%;" mode="decimal" type="number" [min]="0" [step]="1"
+                       (change)="validField('paymentTerm')" (keyup)="validField('paymentTerm')"
+                       [(ngModel)]="wholeseller.paymentTerm"
+                       [pTooltip]="getErrorMessage('paymentTerm')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Typ hurtownika</td>
+            <td><input pInputText id="type" style="width: 150px;" type="text" [style]="{'width':'100%'}"
+                                  (keyup)="validField('type')"
+                                  [(ngModel)]="wholeseller.type"
+                                  [pTooltip]="getErrorMessage('type')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Domyślny transport</td>
+            <td><p-dropdown appendTo="body" id="transportCompany" [style]="{'width':'100%'}"
+                            (onChange)="validField('transportCompany')"
+                            [options]="transportComp"
+                            [(ngModel)]="wholeseller.transportCompany"
+                            [pTooltip]="getErrorMessage('transportCompany')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">Dostęp do panelu</td>
+          </tr>
+          <tr>
+            <td class="bold right">Panel PL</td>
+            <td><p-dropdown appendTo="body" id="panelPL" [style]="{'width':'100%'}"
+                            (onChange)="validField('panelPL')"
+                            [options]="taknieOptions"
+                            [(ngModel)]="wholeseller.panelPL"
+                            [pTooltip]="getErrorMessage('panelPL')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Panel Next77</td>
+            <td><p-dropdown appendTo="body" id="panelNext" [style]="{'width':'100%'}"
+                            (onChange)="validField('panelNext')"
+                            [options]="taknieOptions"
+                            [(ngModel)]="wholeseller.panelNext"
+                            [pTooltip]="getErrorMessage('panelNext')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">Dodatkowe informacje</td>
+          </tr>
+          <tr>
+            <td class="bold right">Opiekun</td>
+            <td><p-dropdown appendTo="body" id="manager" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="validField('manager')"
+                            [options]="profiles"
+                            [(ngModel)]="wholeseller.manager"
+                            [pTooltip]="getErrorMessage('manager')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Firma powiązana</td>
+            <td><p-dropdown appendTo="body" id="connected" [style]="{'width':'100%'}"
+                            (onChange)="validField('connected')"
+                            [options]="taknieOptions"
+                            [(ngModel)]="wholeseller.connected"
+                            [pTooltip]="getErrorMessage('connected')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Dystrybutor</td>
+            <td><p-dropdown appendTo="body" id="distributor" [style]="{'width':'100%'}" filter="false"
+                            (onChange)="validField('distributor')"
+                            [options]="taknieOptions"
+                            [(ngModel)]="wholeseller.distributor"
+                            [pTooltip]="getErrorMessage('distributor')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Aktywny</td>
+            <td><p-dropdown appendTo="body" id="active" [style]="{'width':'100%'}" filter="false"
+                            (onChange)="validField('active')"
+                            [options]="taknieOptions"
+                            [(ngModel)]="wholeseller.isActive"
+                            [pTooltip]="getErrorMessage('active')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 1" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="saveChanges()"></button>
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 2" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-warning"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Adresy dodatkowe" leftIcon="pi pi-id-card" headerStyleClass="adresy-dodatkowe">
+      <app-dodatkowy-adres [source]="source" [sourceId]="sourceId"></app-dodatkowy-adres>
+    </p-tabPanel>
+    <p-tabPanel header="Rabaty" leftIcon="pi pi-id-card" headerStyleClass="rabaty">
+
+    </p-tabPanel>
+    <p-tabPanel header="Komentarze" leftIcon="pi pi-id-card" headerStyleClass="komentarze">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel header="Załączniki" leftIcon="pi pi-id-card" headerStyleClass="zalaczniki">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>

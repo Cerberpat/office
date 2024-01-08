@@ -1,0 +1,125 @@
+<p-confirmDialog></p-confirmDialog>
+<p-table [value]="adresy" dataKey="id" editMode="row" [paginator]="true" [rows]="this.filters.perPage" [autoLayout]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let col of cols">
+        {{col.header}}
+      </th>
+      <th style="width:8em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="rowData">
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="typy" [(ngModel)]="rowData.typ" [showClear]="true" placeholder="Wybierz typ..." filter="true"></p-dropdown>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{getTypName( rowData.typ )}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.nazwa" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.nazwa}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.ulica" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.ulica}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.nrLokalu" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.nrLokalu}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.kodPocztowy" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.kodPocztowy}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.miasto" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.miasto}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="countries" [(ngModel)]="rowData.kraj" [showClear]="true" placeholder="Wybierz kraj..." filter="true"></p-dropdown>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{getKrajNazwa(rowData.kraj)}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.telefon" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.telefon}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="rowData.mail" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.mail}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td style="text-align:center">
+        <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="ui-button-info" style="margin-right: 5px;" (click)="onRowEditInit(rowData)"></button>
+        <button *ngIf="!editing" pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="onRowDelete(rowData)"></button>
+        <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+        <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+  <tr>
+    <td style="width: 10%;"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="typy" [(ngModel)]="add.typ" [showClear]="true" placeholder="Wybierz typ..." filter="true"></p-dropdown></td>
+    <td><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.nazwa" required></td>
+    <td><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.ulica" required></td>
+    <td style="width: 4%;"><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.nrLokalu" required></td>
+    <td style="width: 6%;"><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.kodPocztowy" required></td>
+    <td style="width: 10%;"><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.miasto" required></td>
+    <td style="width: 10%;"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="countries" [(ngModel)]="add.kraj" [showClear]="true" placeholder="Wybierz kraj..." filter="true"></p-dropdown></td>
+    <td style="width: 10%;"><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.telefon" required></td>
+    <td style="width: 10%;"><input pInputText type="text" [style]="{'width':'100%'}" [(ngModel)]="add.mail" required></td>
+    <td style="text-align: center;"><button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="addNewAdres()"></button></td>
+  </tr>
+  </ng-template>
+</p-table>

@@ -1,0 +1,116 @@
+<div class="progress-spinner center" *ngIf="loading">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<p-table #dt [columns]="this.cols" [value]="orders" [paginator]="false" [rows]="filters.perPage" (sortFunction)="customSort($event)" sortField="shop_order.id" [sortOrder]="-1" [customSort]="true" [autoLayout]="true">
+  <ng-template pTemplate="caption">
+    <div style="display: flex; justify-content: space-between">
+      <div style="display: flex;">
+        <div><button style="width: 100%;" pButton type="button" label="Dodaj nowe zamówienie" class="ui-button-raised ui-button-success" (click)="openForm()"></button></div>
+        <div><i class="pi pi-align-justify mouse-hover" (click)="editcolumns()" style="font-size: 2rem; transform: rotate(90deg);"></i></div>
+        <div style="display: flex;line-height: 32px;">
+          <app-filters [filtersList]="filtersList" [source]="source"></app-filters>
+        </div>
+        <div class="arrow" *ngIf="cols.length===0">
+          <div class="arrow-triangle"></div>
+          <div class="arrow-box">Kliknij aby wybrać odpowiednie kolumny.</div>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Search" [(ngModel)]="filters.search" (input)="search()" style="width:auto">
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="filters.perPage" [min]="0" [step]="1" required></th>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.object">
+        {{col.header}}
+        <!--*ngIf="!col.field.includes('ountry') && !col.field.includes('payment') && !col.field.includes('supervisor')"-->
+        <p-sortIcon *ngIf="col.sortable==1" [field]="col.object"></p-sortIcon>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+    <tr [pSelectableRow]="rowData" *ngIf="cols.length>0">
+      <td>{{(this.filters.first+i+1)}}</td>
+      <td *ngFor="let c of cols">
+        <!-- REMOVE??? -->
+        <span *ngIf="c.field === 'paypalID'">{{rowData.paypalID}}</span>
+
+        <!-- BASE DATA -->
+        <span *ngIf="c.field === 'id'">{{rowData.id}}</span>
+        <span *ngIf="c.field === 'setNr'">{{rowData.setNr}}</span>
+        <span *ngIf="c.field === 'company' && rowData.companyObj!=null">{{rowData.companyObj.name}}</span>
+        <span *ngIf="c.field === 'name'">{{rowData.name}}</span>
+        <span *ngIf="c.field === 'shop'">{{rowData.shop}}</span>
+        <span *ngIf="c.field === 'externalID'">{{rowData.externalID}}</span>
+        <span *ngIf="c.field === 'purchaseTime'">{{rowData.purchaseTime}}</span>
+        <span *ngIf="c.field === 'sendData'">{{rowData.shippedOn}}</span>
+        <span *ngIf="c.field === 'comment'">{{rowData.comment}}</span>
+        <span *ngIf="c.field === 'commentCompany'">{{rowData.commentCompany}}</span>
+        <span *ngIf="c.field === 'paymentMethod' && rowData.paymentMethod!=null">{{rowData.paymentMethod.name}}</span>
+        <span *ngIf="c.field === 'trackingNumber'">{{rowData.trackingNumber}}</span>
+        <span *ngIf="c.field === 'trackingCompany'">{{rowData.transportCompanyId}}</span>
+        <span *ngIf="c.field === 'supervisor' && rowData.wholesaler!=null && rowData.wholesaler.managerObj!=null">{{rowData.wholesaler.managerObj.nazwisko+ '' +rowData.wholesaler.managerObj.imie}}</span>
+        <span *ngIf="c.field === 'discountPercentage'">{{rowData.discountPercentage}}%</span>
+        <span *ngIf="c.field === 'discountAmount'">{{rowData.discountAmount}}</span>
+        <span *ngIf="c.field === 'orderStatus'">{{(rowData.orderStatus!=null ? rowData.orderStatus.name : 'brak')}}</span>
+        <span *ngIf="c.field === 'warehouseStatus' && rowData.warehouseStatus!=null">{{rowData.warehouseStatus.name}}</span>
+        <span *ngIf="c.field === 'addBy' && rowData.createdByObj!=null">{{rowData.createdByObj.nazwisko+ '' +rowData.createdByObj.imie}}</span>
+        <span *ngIf="c.field === 'createdAt'">{{rowData.createdAt}}</span>
+        <span *ngIf="c.field === 'active'">{{rowData.isActive}}</span>
+
+        <!-- BILLING -->
+        <span *ngIf="c.field === 'billingName' && rowData.billingAddress!=null">{{rowData.billingAddress.name}}</span>
+        <span *ngIf="c.field === 'billingStreet' && rowData.billingAddress!=null">{{rowData.billingAddress.street}}</span>
+        <span *ngIf="c.field === 'billingBuilding' && rowData.billingAddress!=null">{{rowData.billingAddress.buildingNumber}}</span>
+        <span *ngIf="c.field === 'billingApartment' && rowData.billingAddress!=null">{{rowData.billingAddress.apartmentNumber}}</span>
+        <span *ngIf="c.field === 'billingCity' && rowData.billingAddress!=null">{{rowData.billingAddress.city}}</span>
+        <span *ngIf="c.field === 'billingNip' && rowData.billingAddress!=null">{{rowData.billingAddress.nip}}</span>
+        <span *ngIf="c.field === 'billingZipCode' && rowData.billingAddress!=null">{{rowData.billingAddress.zipCode}}</span>
+        <span *ngIf="c.field === 'billingCountry' && rowData.billingAddress!=null && rowData.billingAddress.country!=null">{{rowData.billingAddress.country.name}}</span>
+        <span *ngIf="c.field === 'billingCountryName' && rowData.billingAddress!=null">{{rowData.billingAddress.name}}</span>
+        <span *ngIf="c.field === 'billingMail' && rowData.billingAddress!=null">{{rowData.billingAddress.email}}</span>
+        <span *ngIf="c.field === 'billingPhone' && rowData.billingAddress!=null">{{rowData.billingAddress.phone}}</span>
+
+        <!-- SHIPPING -->
+        <span *ngIf="c.field === 'shippingName' && rowData.shippingAddress!=null">{{rowData.shippingAddress.name}}</span>
+        <span *ngIf="c.field === 'shippingStreet' && rowData.shippingAddress!=null">{{rowData.shippingAddress.street}}</span>
+        <span *ngIf="c.field === 'shippingBuilding' && rowData.shippingAddress!=null">{{rowData.shippingAddress.buildingNumber}}</span>
+        <span *ngIf="c.field === 'shippingApartment' && rowData.shippingAddress!=null">{{rowData.shippingAddress.apartmentNumber}}</span>
+        <span *ngIf="c.field === 'shippingZipCode' && rowData.shippingAddress!=null">{{rowData.shippingAddress.zipCode}}</span>
+        <span *ngIf="c.field === 'shippingCity' && rowData.shippingAddress!=null">{{rowData.shippingAddress.city}}</span>
+        <span *ngIf="c.field === 'shippingCountryId' && rowData.shippingAddress!=null && rowData.shippingAddress.country!=null">{{rowData.shippingAddress.country.name}}</span>
+        <span *ngIf="c.field === 'shippingCountryName' && rowData.shippingAddress!=null">{{rowData.shippingAddress.name}}</span>
+        <span *ngIf="c.field === 'shippingMail' && rowData.shippingAddress!=null">{{rowData.shippingAddress.email}}</span>
+        <span *ngIf="c.field === 'shippingPhone' && rowData.shippingAddress!=null">{{rowData.shippingAddress.phone}}</span>
+
+        <!-- CEREBRO -->
+        <span *ngIf="c.field === 'cerebroID'">{{rowData.cerebroID}}</span>
+        <span *ngIf="c.field === 'cerebroStatus'">{{rowData.cerebroStatus}}</span>
+        <span *ngIf="c.field === 'cerebroInvoiceLink'">{{rowData.cerebroInvoiceLink}}</span>
+        <span *ngIf="c.field === 'commentsCerebro'">{{rowData.cerebroComments}}</span>
+        <span *ngIf="c.field === 'braki'">{{rowData.missingProductsQuantity}}</span>
+      </td>
+      <td>
+        <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="openForm(rowData)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <td [colSpan]="cols.length+2">
+        <p-paginator
+          [pageLinkSize]="10"
+          [rows]="this.filters.perPage"
+          [first]="this.filters.first"
+          [totalRecords]="this.filters.count"
+          [rowsPerPageOptions]="[25,50,100]"
+          (onPageChange)="paginate($event)" appendTo="body">
+        </p-paginator>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

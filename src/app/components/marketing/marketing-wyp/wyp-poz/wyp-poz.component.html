@@ -1,0 +1,53 @@
+<p-table #dt [columns]="cols" [value]="wypozyczeniaPozycje" dataKey="id" editMode="row" [paginator]="true" [rows]="this.filters.perPage" [autoLayout]="true">
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="this.filters.perPage" [min]="0" [step]="1" required></th>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+        {{col.header}}
+        <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+      </th>
+      <th style="width:8em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="rowData">
+      <td>{{ri+1}}</td>
+      <td>
+        {{rowData.nazwa}}
+      </td>
+      <td>
+        {{rowData.ilosc}}
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="rowData.wysylka" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.wysylka}}<br />
+            <span class="text-small">{{rowData.wysylkaCzas}}</span>
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="rowData.zwrot" required>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.zwrot}}<br />
+            <span class="text-small">{{rowData.zwrotCzas}}</span>
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        {{getProfileNazwa( rowData.dodal )}}
+      </td>
+      <td style="text-align:center">
+        <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="ui-button-info" (click)="onRowEditInit(rowData)"></button>
+        <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+        <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

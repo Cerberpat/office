@@ -1,0 +1,59 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<div class="progress-spinner center" *ngIf="loading">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<p-table #dt *ngIf="companies!==[] && shippingStatus!==[]" [columns]="this.cols" [value]="shippings" [paginator]="false" [rows]="filters.perPage" (sortFunction)="customSort($event)" sortField="purchaseTime" [sortOrder]="-1" [customSort]="true" [autoLayout]="true">
+  <ng-template pTemplate="caption">
+    <div style="display: flex;">
+      <div style="display: flex;">
+        <div><button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-success" (click)="openForm()"></button></div>
+        <div class="arrow" *ngIf="cols.length===0">
+          <div class="arrow-triangle"></div>
+          <div class="arrow-box">Kliknij aby wybrać odpowiednie kolumny.</div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="filters.perPage" [min]="0" [step]="1" required></th>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.object+'|'+col.field">
+        {{col.header}}
+        <p-sortIcon *ngIf="col.sortable==1" [field]="col.field"></p-sortIcon>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+    <tr [pSelectableRow]="rowData" *ngIf="cols.length>0">
+      <td>{{(this.filters.first+i+1)}}</td>
+      <td *ngFor="let c of cols">
+        <span *ngIf="c.field === 'title'">{{rowData.title}}</span>
+        <span *ngIf="c.field === 'deliveryDate'">{{printFormatedDate(rowData.deliveryDate)}}</span>
+        <span *ngIf="c.field === 'companyId'">{{printCompany(rowData.companyId)}}</span>
+        <span *ngIf="c.field === 'statusId'">{{printStatus(rowData.statusId)}}</span>
+      </td>
+      <td>
+        <button pButton type="button" *ngIf="rowData.statusId==4 || rowData.statusId==5 || rowData.statusId==6" [ngStyle]="{'margin-right': '5px'}" icon="pi pi-pencil" class="ui-button-info" (click)="openForm(rowData)"></button>
+        <button pButton type="button" *ngIf="rowData.statusId==5 || rowData.statusId==6" [ngStyle]="{'margin-right': '5px'}" icon="pi pi-share-alt" class="ui-button-info" (click)="split(rowData)"></button>
+        <button pButton type="button" *ngIf="rowData.statusId==5" [ngStyle]="{'margin-right': '5px'}" icon="pi pi-forward" class="ui-button-info" (click)="changeStatus(rowData, 6)"></button>
+        <button pButton type="button" *ngIf="rowData.statusId==3" [ngStyle]="{'margin-right': '5px'}" icon="pi pi-folder-open" class="ui-button-info" (click)="archiveDelivery(rowData)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <td [colSpan]="cols.length+2">
+        <p-paginator
+          [pageLinkSize]="10"
+          [rows]="this.filters.perPage"
+          [first]="this.filters.first"
+          [totalRecords]="this.filters.count"
+          [rowsPerPageOptions]="[25,50,100]"
+          (onPageChange)="paginate($event)" appendTo="body">
+        </p-paginator>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

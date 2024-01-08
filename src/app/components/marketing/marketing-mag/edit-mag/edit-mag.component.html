@@ -1,0 +1,70 @@
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane" leftIcon="pi pi-id-card">
+      <p-table [value]="marketingMagTemp" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td class="bold">Firma</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="firmy" [(ngModel)]="rec.firma" placeholder="Wybierz firmę..." [showClear]="true" filter="true"></p-dropdown></td>
+            <td class="bold">Opiekun</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="profiles" [(ngModel)]="rec.opiekun" placeholder="Wybierz opiekuna..." [showClear]="true" filter="true"></p-dropdown></td>
+          </tr><tr>
+            <td class="bold">Nazwa</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.nazwa" [style]="{'width':'100%'}"></td>
+            <td class="bold">Category</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="kategorie" [(ngModel)]="rec.kategoria" placeholder="Wybierz kategorie..." [showClear]="true" filter="true"></p-dropdown></td>
+          </tr><tr>
+            <td class="bold">ID produktu</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.prodId" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Identyfikator</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.identyfikator" [style]="{'width':'100%'}"></td>
+            <td class="bold">Numer seryjny</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.numerSeryjny" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Finansowanie</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.finansowanie" [style]="{'width':'100%'}"></td>
+            <td class="bold">Nr. dokumentu wprowadzającego</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.nrDokWpro" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Produkt podlega wypożyczeniom</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="takNie" [(ngModel)]="rec.doWypozyczen" [showClear]="true" filter="true"></p-dropdown></td>
+          </tr><tr>
+            <td class="bold">Materiał marketingowy</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="takNie" [(ngModel)]="rec.materialMarketingowy" [showClear]="true" filter="true"></p-dropdown></td>
+            <td class="bold" *ngIf="rec.materialMarketingowy === '1'">Ilość początkowa</td>
+            <td *ngIf="rec.materialMarketingowy === '1'"><input type="text" pInputText [(ngModel)]="rec.iloscPoczatkowa" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Lokalizacja</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="lokalizacje" [(ngModel)]="rec.lokalizacja" placeholder="Wybierz lokalizację..." [showClear]="true" filter="true"></p-dropdown></td>
+            <td class="bold">Opis lokalizacji</td>
+            <td><input type="text" pInputText [(ngModel)]="rec.lokalizacjaOpis" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td style="text-align: right;" colspan="4">
+              <button pButton type="button" icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="saveEdit()"></button>
+              <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="cancelEdit()"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="marketingMag.id > 0" header="Historia stanu technicznego" leftIcon="pi pi-folder-open">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="marketingMag.id > 0" header="Zmany ilości" leftIcon="pi pi-chart-bar">
+      <app-zmiany-ilosci [source]="source" [sourceId]="sourceId" [iloscPoczatkowa]="iloscPoczatkowa"></app-zmiany-ilosci>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="marketingMag.id > 0" header="Pliki" leftIcon="pi pi-paperclip">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog [(visible)]="display">
+  <p-header>
+    Komunikat systemu
+  </p-header>
+  <p [innerHTML]="dialogMessage"></p>
+  <p-footer>
+    <button pButton pRipple type="button" label="Zamknij" class="p-button-warning float-r" (click)="closeDialog()"></button>
+  </p-footer>
+</p-dialog>

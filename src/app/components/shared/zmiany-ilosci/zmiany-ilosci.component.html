@@ -1,0 +1,93 @@
+<p-table #dt [columns]="cols" [value]="ilosci" dataKey="id" editMode="row" [paginator]="true" [rows]="filters.perPage" [autoLayout]="true">
+  <ng-template pTemplate="caption">
+    <div style="position: relative; min-height: 2.4em">
+      <div style="position: absolute; left: 0px; top: 0px;">
+        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="filters.perPage" [min]="0" [step]="1" required></th>
+      <th>Ilość</th>
+      <th>Komentarz</th>
+      <th>Dodał/a</th>
+      <th>Dodano</th>
+      <th style="width:8em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="rowData">
+      <td>{{ri+1}}</td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <textarea pInputTextarea [(ngModel)]="rowData.wartosc" [style]="{'width':'100%'}"></textarea>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.wartosc}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <textarea pInputTextarea [(ngModel)]="rowData.komentarz" [style]="{'width':'100%'}"></textarea>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.komentarz}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            {{getProfilNazwa( rowData.dodal )}}
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{getProfilNazwa( rowData.dodal )}}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            {{rowData.czasDodania}}
+            <p class="edycja-p" *ngIf="rowData.ostatniaEdycja !== '0000-00-00 00:00:00'">Ostatnia edycja: {{rowData.ostatniaEdycja}}</p>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{rowData.czasDodania}}
+            <p class="edycja-p" *ngIf="rowData.ostatniaEdycja !== '0000-00-00 00:00:00'">Ostatnia edycja: {{rowData.ostatniaEdycja}}</p>
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td style="text-align:center">
+        <button *ngIf="!editing && logedUser.dostep.toString() == '1'" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="ui-button-info" style="margin-right: .5em" (click)="onRowEditInit(rowData)"></button>
+        <button *ngIf="!editing && logedUser.dostep.toString() == '1'" pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="onRowDelete(rowData)"></button>
+        <button *ngIf="editing && logedUser.dostep.toString() == '1'" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+        <button *ngIf="editing && logedUser.dostep.toString() == '1'" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <td></td>
+      <td>
+        <p-spinner [inputStyle]="{'width':'100%'}" [(ngModel)]="newRekord.wartosc" [step]="1" placeholder="Ilość"></p-spinner>
+      </td>
+      <td colspan="3">
+        <textarea pInputTextarea [(ngModel)]="newRekord.komentarz" [style]="{'width':'100%'}" placeholder="Komentarz"></textarea>
+      </td>
+      <td style="text-align: center;"><button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="addRekord()"></button></td>
+    </tr>
+    <tr>
+      <td>Początkowo: <span class="orange-text">{{iloscPoczatkowa}}</span></td>
+      <td>Ruch: <span class="orange-text">{{this.sumaIlosci}}</span></td>
+      <td>Pozostało: <span class="orange-text">{{(iloscPoczatkowa - this.sumaIlosci)}}</span></td>
+      <td colspan="2"></td>
+      <td style="text-align: center;"><button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="addRekord()"></button></td>
+    </tr>
+  </ng-template>
+</p-table>
+<p-confirmDialog></p-confirmDialog>

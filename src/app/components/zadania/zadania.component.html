@@ -1,0 +1,186 @@
+DO POPRAWKI
+<!--<p-fieldset legend="Zadania bieżące" [toggleable]="true" [collapsed]=false>
+  <div class="w100" style="position: relative;">
+    <button style="float: right; width: 10%; margin-left: 1rem" pButton type="button" label="Odśwież" class="ui-button-raised ui-button-success" (click)="odswiez();"></button>
+    <p-multiSelect [style]="{'width':'20%', 'float':'right'}" [options]="sections" [(ngModel)]="selectedProfiles" optionLabel="name" optionValue="id" placeholder="Wybierz osobę..."></p-multiSelect>
+    <br /><br />
+  </div>
+  <div class="w35">
+    <p-table class="tabela" [value]="zadania.oczekujace" [columns]="cols" [reorderableColumns]="true" autoLayout="true" (onRowReorder)="zapiszKolejnosc( 'oczekujace' );">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style="width:3rem"></th>
+          <th *ngIf="selectedProfilesTemp.length > 1">Wykonujący</th>
+          <th colspan="2">Oczekujące</th>
+          <th style="width:3rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex" let-ri="rowIndex">
+        <tr [pReorderableRow]="index" class="clickable-row">
+          <td *ngIf="rowData.wykonawca === logedUser.id || logedUser.dostep.toString() === '1'"><span class="pi pi-sort-alt" pReorderableRowHandle></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id && logedUser.dostep.toString() !== '1'"></td>
+          <td class="clickable-row-td" *ngIf="selectedProfilesTemp.length > 1">{{getWlascicielName( rowData.wykonawca )}}</td>
+          <td class="clickable-row-td" (click)="editDialog(rowData)">{{rowData.nazwa}}</td>
+          <td class="clickable-row-td center" style="width:8rem" (click)="editDialog(rowData)">{{rowData.deadline}}</td>
+          <td *ngIf="rowData.wykonawca === logedUser.id" class="clickable-row" (click)="setStatus(rowData, 1)"><span class="pi pi-angle-right"></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id"></td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="3"><button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-success" (click)="addDialog();"></button></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="w35 mp ml">
+    <p-table class="tabela" [value]="zadania.realizowane" [columns]="cols" [reorderableColumns]="true" autoLayout="true" (onRowReorder)="zapiszKolejnosc( 'realizowane' );">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style="width:3rem"></th>
+          <th style="width:3rem"></th>
+          <th *ngIf="selectedProfilesTemp.length > 1">Wykonujący</th>
+          <th colspan="2">Realizowane</th>
+          <th style="width:3rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex" let-ri="rowIndex">
+        <tr [pReorderableRow]="index" class="clickable-row">
+          <td *ngIf="rowData.wykonawca === logedUser.id || logedUser.dostep.toString() === '1'"><span class="pi pi-sort-alt" pReorderableRowHandle></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id && logedUser.dostep.toString() !== '1'"></td>
+          <td *ngIf="rowData.wykonawca === logedUser.id" class="clickable-row" (click)="setStatus(rowData, 0)"><span class="pi pi-angle-left"></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id"></td>
+          <td class="clickable-row-td" *ngIf="selectedProfilesTemp.length > 1">{{getWlascicielName( rowData.wykonawca )}}</td>
+          <td class="clickable-row-td" (click)="editDialog(rowData)">{{rowData.nazwa}}</td>
+          <td class="clickable-row-td center" style="width:8rem" (click)="editDialog(rowData)">{{rowData.deadline}}</td>
+          <td *ngIf="rowData.wykonawca === logedUser.id" class="clickable-row" (click)="setStatus(rowData, 2)"><span class="pi pi-angle-right"></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id"></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="w29">
+    <p-table class="tabela" [value]="zadania.zakonczone" [columns]="cols" [reorderableColumns]="true" autoLayout="true" (onRowReorder)="zapiszKolejnosc( 'zakonczone' );">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style="width:3rem"></th>
+          <th style="width:3rem"></th>
+          <th *ngIf="selectedProfilesTemp.length > 1">Wykonujący</th>
+          <th>Zakończone</th>
+          <th style="width:3rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex" let-ri="rowIndex">
+        <tr [pReorderableRow]="index" class="clickable-row">
+          <td *ngIf="rowData.wykonawca === logedUser.id || logedUser.dostep.toString() === '1'"><span class="pi pi-sort-alt" pReorderableRowHandle></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id && logedUser.dostep.toString() !== '1'"></td>
+          <td *ngIf="rowData.wykonawca === logedUser.id" class="clickable-row" (click)="cofnijZakonczony(rowData, 1)"><span class="pi pi-angle-left"></span></td>
+          <td *ngIf="rowData.wykonawca !== logedUser.id"></td>
+          <td class="clickable-row-td" *ngIf="selectedProfilesTemp.length > 1">{{getWlascicielName( rowData.wykonawca )}}</td>
+          <td class="clickable-row-td" (click)="editDialog(rowData)">{{rowData.nazwa}}</td>
+          <td class="clickable-row-td">{{getCzas(rowData.czasTrwania)}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-fieldset>
+<br />
+<p-fieldset legend="Zadania pod opieką" [toggleable]="true" [collapsed]=false>
+  <p-table class="tabela" [value]="zadaniaDoAkceptacji" [columns]="cols" [reorderableColumns]="true" autoLayout="true">
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th style="width:3rem"></th>
+        <th>Nazwa</th>
+        <th>Wykonał</th>
+        <th>Zakończono</th>
+        <th style="width:8rem">Odczytano</th>
+        <th style="width:8rem">Deadline</th>
+        <th style="width:3rem"></th>
+        <th style="width:3rem"></th>
+        <th style="width:3rem"></th>
+        <th style="width:3rem"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex" let-ri="rowIndex">
+      <tr [pReorderableRow]="index" class="clickable-row">
+        <td>{{ri+1}}</td>
+        <td class="clickable-row-td" (click)="editDialog(rowData)">{{rowData.nazwa}}</td>
+        <td class="clickable-row-td" (click)="editDialog(rowData)">{{getWlascicielName(rowData.wykonawca)}}</td>
+        <td class="clickable-row-td center" (click)="editDialog(rowData)">{{rowData.czasZakonczenia}}</td>
+        <td class="clickable-row-td center" (click)="editDialog(rowData)">{{rowData.czasOdczytania}}</td>
+        <td class="clickable-row-td center" (click)="editDialog(rowData)">{{rowData.deadline}}</td>
+        <td>{{getCzas(rowData.czasTrwania)}}</td>
+        <td pTooltip="Zwróć do poprawy" tooltipPosition="bottom" placeholder="Bottom" *ngIf="rowData.status.toString() === '2'">
+          <button pButton type="button" icon="pi pi-chevron-left" class="ui-button-warning" style="margin-right: .5em" (click)="setStatus(rowData, 1)"></button>
+        </td>
+        <td *ngIf="rowData.status.toString() !== '2'"></td>
+        <td pTooltip="Zaakceptuj" tooltipPosition="bottom" placeholder="Bottom" *ngIf="rowData.status.toString() === '2'">
+          <button pButton type="button" icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="acceptZadania(rowData)"></button>
+        </td>
+        <td *ngIf="rowData.status.toString() !== '2'"></td>
+        <td pTooltip="Usuń" tooltipPosition="bottom" placeholder="Bottom" *ngIf="rowData.zatwierdzajacy === logedUser.id && rowData.status <= 1">
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" style="margin-right: .5em" (click)="usunZadanie(rowData)"></button>
+        </td>
+        <td *ngIf="rowData.zatwierdzajacy !== logedUser.id || rowData.status > 1"></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+<br />
+<p-fieldset legend="Zadania zakończone" [toggleable]="true" [collapsed]=false>
+  <div class="w100" style="position: relative;">
+    <button style="float: right; width: 10%; margin-left: 1rem" pButton type="button" label="Odśwież" class="ui-button-raised ui-button-success" (click)="odswiezZakonczone();"></button>
+    <p-multiSelect [style]="{'width':'20%', 'float':'right', 'margin-left':'1rem'}" [options]="sections" [(ngModel)]="zakonczone.profil" optionLabel="name" optionValue="id" placeholder="Wybierz osobę..." (onChange)="odswiezZakonczone()"></p-multiSelect>
+    <p-calendar [style]="{'width':'20%', 'float':'right', 'margin-left':'1rem'}" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="zakonczone.dataStop" [maxDate]="maxDate" [showIcon]="true" (onSelect)="odswiezZakonczone()" dateFormat="yy-mm-dd" placeholder="Data końcowa"></p-calendar>
+    <p-calendar [style]="{'width':'20%', 'float':'right', 'margin-left':'1rem'}" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="zakonczone.dataStart" [maxDate]="maxDate" [showIcon]="true" (onSelect)="odswiezZakonczone()" dateFormat="yy-mm-dd" placeholder="Data początkowa"></p-calendar>
+    <p-dropdown [style]="{'width':'20%', 'float':'right'}" [options]="typyZakonczone" [(ngModel)]="zakonczone.typ" placeholder="Wybierz typ" optionLabel="name" optionValue="id" [showClear]="true" (onChange)="odswiezZakonczone()"></p-dropdown>
+    <br /><br />
+  </div>
+  <div class="w100">
+    <p-table class="tabela" [value]="zadaniaZamkniete" autoLayout="true">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style="width:8rem">Czas rozpoczęcia</th>
+          <th style="width:8rem">Czas realizacji</th>
+          <th>Nazwa</th>
+          <th>Wykonane</th>
+          <th>Opiekun</th>
+          <th style="width:8rem">Czas zakończenia</th>
+          <th style="width:8rem">Deadline</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex" let-ri="rowIndex">
+        <tr [pReorderableRow]="index" class="clickable-row" (click)="editDialog(rowData)">
+          <td class="clickable-row-td">{{rowData.czasRozpoczecia}}</td>
+          <td class="clickable-row-td">{{getCzas( rowData.czasTrwania )}}</td>
+          <td class="clickable-row-td">{{rowData.nazwa}}</td>
+          <td class="clickable-row-td">{{getWlascicielName( rowData.wykonawca )}}</td>
+          <td class="clickable-row-td">{{getWlascicielName( rowData.zatwierdzajacy )}}</td>
+          <td class="clickable-row-td">{{rowData.czasZakonczenia}}</td>
+          <td class="clickable-row-td">{{rowData.deadline}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-fieldset>-->
+  <!-- <p-tabPanel header="Zakończone - oś czasu">
+    <ngx-ts *ngIf="sections !== undefined && items !== undefined"
+            [items]="items"
+            [periods]="periods"
+            [sections]="sections"
+            [events]="events"
+            [locale]="es"
+            [text]="text"
+            [showBusinessDayOnly]="false"
+    ></ngx-ts>
+  </p-tabPanel> -->
+<!--<p-dialog [(visible)]="display">
+  <p-header>
+    Komunikat systemu
+  </p-header>
+  <p [innerHTML]="dialogMessage"></p>
+  <p-footer>
+    <button pButton pRipple type="button" label="Zamknij" class="p-button-warning float-r" (click)="closeDialog()"></button>
+  </p-footer>
+</p-dialog>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>-->

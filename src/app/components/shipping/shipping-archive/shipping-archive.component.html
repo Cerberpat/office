@@ -1,0 +1,52 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<p-table [value]="[shipping]" [autoLayout]="true">
+  <ng-template pTemplate="body"  let-rec>
+    <tr>
+      <th colspan="4" class="bold center belka">Dane dostawy</th>
+    </tr>
+    <tr>
+      <td class="bold right">Data dostawy</td>
+      <td>{{printFormatedDate( shipping.deliveryDate )}}</td>
+    </tr>
+    <tr>
+      <td class="bold right">Tytuł</td>
+      <td>{{shipping.title}}</td>
+    </tr>
+    <tr>
+      <td class="bold right">Firma</td>
+      <td>{{printCompany(shipping.companyId)}}</td>
+    </tr>
+    <tr>
+      <td class="bold right">Uwagi</td>
+      <td>{{shipping.comment}}</td>
+    </tr>
+  </ng-template>
+</p-table>
+<p-table #dt [value]="shippingItems" [autoLayout]="true" [style]="{'margin-top':'50px'}">
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="filters.perPage" [min]="0" [step]="1" required></th>
+      <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+        {{col.header}}
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+    <tr [pSelectableRow]="rowData" class="item-{{rowData.id}}" [style]="{'color':getAllertColor(rowData)}">
+      <td>{{(this.filters.first+i+1)}}</td>
+      <td *ngFor="let c of cols">
+        <span *ngIf="c.field!='categoryName'">{{rowData[c.field]}}</span>
+        <span *ngIf="c.field=='categoryName'"></span>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <td [colSpan]="6">
+        <button style="width: 100%; margin-top: 15px;" pButton type="button" label="Archiwizuj dostawę" class="ui-button-raised ui-button-success" (click)="archiveShipping()"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

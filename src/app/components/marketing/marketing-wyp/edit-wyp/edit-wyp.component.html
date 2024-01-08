@@ -1,0 +1,37 @@
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane" leftIcon="pi pi-id-card">
+      <p-table [value]="marketingWypTemp" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td class="bold">Firma</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="firmy" [(ngModel)]="rec.firma" [showClear]="true" filter="true"></p-dropdown></td>
+            <td class="bold">Odbiorca</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="odbiorcySelect" [(ngModel)]="rec.odbiorca" [showClear]="true" filter="true"></p-dropdown></td>
+          </tr><tr>
+            <td class="bold">Data Wypozyczenia</td>
+            <td><p-calendar [style]="{'width':'100%'}" [locale]="locale" appendTo="body" [disabledDays]="[0,6]" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="rec.dataWypozyczenia" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+            <td class="bold">Data Zwrotu</td>
+            <td><p-calendar [style]="{'width':'100%'}" [locale]="locale" appendTo="body" [disabledDays]="[0,6]" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="rec.dataZwrotu" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+          </tr>
+          <tr>
+            <td style="text-align: right;" colspan="4">
+              <button pButton type="button" icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="saveEdit()"></button>
+              <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="cancelEdit()"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <app-wyp-poz [source]="source" [sourceId]="sourceId"></app-wyp-poz>
+    </p-tabPanel>
+    <p-tabPanel header="Historia stanu technicznego" leftIcon="pi pi-folder-open">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel header="Zmany ilości" leftIcon="pi pi-chart-bar">
+      <app-zmiany-ilosci [source]="source" [sourceId]="sourceId"></app-zmiany-ilosci>
+    </p-tabPanel>
+    <p-tabPanel header="Pliki" leftIcon="pi pi-paperclip">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>

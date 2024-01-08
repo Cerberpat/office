@@ -1,0 +1,48 @@
+<p-table #dt [columns]="this.cols" [value]="invoices" [paginator]="false" [rows]="filters.perPage" (sortFunction)="customSort($event)" sortField="name" [sortOrder]="1" [customSort]="true" [autoLayout]="true">
+  <ng-template pTemplate="caption">
+    <div style="display: flex;">
+      <div><button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-success" (click)="openForm()"></button></div>
+      <div><i class="pi pi-align-justify mouse-hover" (click)="editcolumns()" style="font-size: 2rem; transform: rotate(90deg);"></i></div>
+      <div class="arrow" *ngIf="cols.length===0">
+        <div class="arrow-triangle"></div>
+        <div class="arrow-box">Kliknij aby wybrać odpowiednie kolumny.</div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="filters.perPage" [min]="0" [step]="1" required></th>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+        {{col.header}}
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+    <tr [pSelectableRow]="rowData" *ngIf="cols.length>0">
+      <td>{{(this.filters.first+i+1)}}</td>
+      <td *ngFor="let c of cols">
+        <span *ngIf="c.field === 'id'">{{rowData.id}}</span>
+      </td>
+      <td>
+        <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="openForm(rowData)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <td [colSpan]="cols.length+2">
+        <p-paginator
+          [pageLinkSize]="10"
+          [rows]="this.filters.perPage"
+          [first]="this.filters.first"
+          [totalRecords]="this.filters.count"
+          [rowsPerPageOptions]="[25,50,100]"
+          (onPageChange)="paginate($event)" appendTo="body">
+        </p-paginator>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+

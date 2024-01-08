@@ -1,0 +1,48 @@
+<p-table #dt [value]="magazyn" dataKey="id" [paginator]="true" [rows]="this.filters.perPage" [autoLayout]="true" [globalFilterFields]="['prodId','nazwa','numerSeryjny']">
+  <ng-template pTemplate="caption">
+    <div style="position: relative; min-height: 2.4em">
+      <div style="position: absolute; left: 0px; top: 0px;">
+        <button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-success" (click)="editRow( null )"></button>
+      </div>
+      <div style="text-align: right">
+        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="this.filters.perPage" [min]="0" [step]="1" required></th>
+      <th>ID.</th>
+      <th>Nazwa</th>
+      <th>Category</th>
+      <th>Nr. seryjny</th>
+      <th>Lokalizacja</th>
+      <th>Opiekun</th>
+      <th>Dostępność</th>
+      <th>LLink do wyp.</th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-mag let-i="rowIndex">
+    <tr [pSelectableRow]="mag">
+      <td>{{i+1}}</td>
+      <td>{{mag.prodId}}</td>
+      <td>{{mag.nazwa}}</td>
+      <td>{{getKategoriaNazwa(mag.kategoria)}}</td>
+      <td>{{mag.numerSeryjny}}</td>
+      <td>{{getLokalizacjaNazwa(mag.lokalizacja)}}</td>
+      <td>{{getProfilesNazwa(mag.opiekun)}}</td>
+      <td>data dostepnosci</td>
+      <td>link do wyp.</td>
+      <td>
+        <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="editRow(mag)"></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="7">Nie znaleziono pasującego rekordu.</td>
+    </tr>
+  </ng-template>
+</p-table>

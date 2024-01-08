@@ -1,0 +1,382 @@
+<p-toast></p-toast>
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane ogólne" leftIcon="pi pi-id-card" headerStyleClass="dane-ogolne">
+      <p-table [value]="[product]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td colspan="6" class="bold center">Identyfikatory</td>
+          </tr>
+          <tr>
+            <td class="bold right">Nazwa PL</td>
+            <td colspan="3">{{getNazwa('PL')}}</td>
+            <td colspan="2" rowspan="5">foto</td>
+          </tr>
+          <tr>
+            <td class="bold right">Nazwa EN</td>
+            <td colspan="3">{{getNazwa('EN')}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">ID</td>
+            <td>{{product.id}}</td>
+            <td class="bold right">EAN</td>
+            <td><input pInputText id="barcode" style="width: 150px;" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('barcode')"
+                       [(ngModel)]="product.barcode"
+                       [pTooltip]="getErrorMessage('barcode')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Kategoria</td>
+            <td><p-dropdown appendTo="body" id="categoryId" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="validField('categoryId')"
+                            [options]="categories"
+                            [(ngModel)]="product.categoryId"
+                            [pTooltip]="getErrorMessage('categoryId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Producent</td>
+            <td><p-dropdown appendTo="body" id="markId" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="validField('markId')"
+                            [options]="marks"
+                            [(ngModel)]="product.markId"
+                            [pTooltip]="getErrorMessage('markId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">GTU</td>
+            <td><p-dropdown appendTo="body" id="gtu" [style]="{'width':'100%'}" filter="true"
+                            (onChange)="validField('gtu')"
+                            [options]="gtu"
+                            [(ngModel)]="product.gtu"
+                            [pTooltip]="getErrorMessage('gtu')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Cerebro SKU</td>
+            <td><input pInputText id="cerebroSku" style="width: 150px;" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('cerebroSku')"
+                       [(ngModel)]="product.cerebroSku"
+                       [pTooltip]="getErrorMessage('cerebroSku')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="row-separator">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Ustawienia</td>
+          </tr>
+          <tr>
+            <td class="bold right">Wymaga pickowania</td>
+            <td><p-dropdown appendTo="body" id="packaging" [style]="{'width':'150px'}"
+                            (onChange)="validField('packaging')"
+                            [options]="takNie"
+                            [(ngModel)]="product.packaging"
+                            [pTooltip]="getErrorMessage('packaging')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Nr. seryjny na wyjściu</td>
+            <td><p-dropdown appendTo="body" id="serialNo" [style]="{'width':'150px'}"
+                            (onChange)="validField('serialNo')"
+                            [options]="takNie"
+                            [(ngModel)]="product.serialNo"
+                            [pTooltip]="getErrorMessage('serialNo')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Produkt BOM</td>
+            <td><p-dropdown appendTo="body" id="bom" [style]="{'width':'150px'}"
+                            (onChange)="validField('bom')"
+                            [options]="takNie"
+                            [(ngModel)]="product.bom"
+                            [pTooltip]="getErrorMessage('bom')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Możliwa wysyłka</td>
+            <td><p-dropdown appendTo="body" id="deliveryOff" [style]="{'width':'150px'}"
+                            (onChange)="validField('deliveryOff')"
+                            [options]="takNie"
+                            [(ngModel)]="product.deliveryOff"
+                            [pTooltip]="getErrorMessage('deliveryOff')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Produkt wycofywany</td>
+            <td><p-dropdown appendTo="body" id="newShippings" [style]="{'width':'150px'}"
+                            (onChange)="validField('newShippings')"
+                            [options]="takNie"
+                            [(ngModel)]="product.newShippings"
+                            [pTooltip]="getErrorMessage('newShippings')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="row-separator">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Status</td>
+          </tr>
+          <tr>
+            <td class="bold right">Widoczny</td>
+            <td><p-dropdown appendTo="body" id="visible" [style]="{'width':'150px'}"
+                            (onChange)="validField('visible')"
+                            [options]="takNie"
+                            [(ngModel)]="product.visible"
+                            [pTooltip]="getErrorMessage('visible')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Dubel</td>
+            <td><p-dropdown appendTo="body" id="dubel" [style]="{'width':'150px'}"
+                            (onChange)="validField('dubel')"
+                            [options]="takNie"
+                            [(ngModel)]="product.dubel"
+                            [pTooltip]="getErrorMessage('dubel')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Archiwalny</td>
+            <td><p-dropdown appendTo="body" id="isArchive" [style]="{'width':'150px'}"
+                            (onChange)="validField('isArchive')"
+                            [options]="takNie"
+                            [(ngModel)]="product.isArchive"
+                            [pTooltip]="getErrorMessage('isArchive')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="row-separator">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Inne</td>
+          </tr>
+          <tr>
+            <td class="bold right">Komentarz</td>
+            <td colspan="5"><input pInputText id="comment" (keyup)="validField('comment')" style="width: 100%;" type="text" [(ngModel)]="product.comment"></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Ceny" leftIcon="pi pi-dollar" headerStyleClass="ceny">
+
+    </p-tabPanel>
+    <p-tabPanel header="Nazwy" leftIcon="pi pi-list" headerStyleClass="nazwy">
+      <p-table [value]="getProductNamesByType( 'short' )" dataKey="language" editMode="row" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="4" class="bold center">Nazwy krótkie</th>
+          </tr>
+          <tr>
+            <th style="width:8rem">Lp.</th>
+            <th>Język</th>
+            <th>Nazwa</th>
+            <th style="width:8rem"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+          <tr [pEditableRow]="product">
+            <td>{{ri+1}}</td>
+            <td>{{product.language}} - {{getLanguageByIso( product.language )}}</td>
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" style="width: 100%;" [(ngModel)]="product.name">
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{product.name}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td style="text-align:center">
+              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-save" (click)="onRowEditSave(product)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(product, ri)" style="margin-left: 10px;" class="p-button-rounded p-button-text p-button-danger"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <th style="width:8rem"></th>
+            <th><p-dropdown appendTo="body" id="languageShort" [style]="{'width':'100%'}" filter="true"
+                            [options]="getLangagesLeft('short')"
+                            [(ngModel)]="newShort.language"
+                            [pTooltip]="getErrorMessage('languageShort')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></th>
+            <th><input pInputText id="nameshort" style="width: 100%;" type="text"
+                       (keyup)="validField('nameshort')"
+                       [(ngModel)]="newShort.name"
+                       [pTooltip]="getErrorMessage('nameshort')" tooltipStyleClass="form-error" tooltipPosition="top"></th>
+            <th style="width:8rem">
+              <button pButton type="button" icon="pi pi-save" class="ui-button-success" style="margin-right: .5em" (click)="addName(newShort, 'short')"></button>
+            </th>
+          </tr>
+        </ng-template>
+      </p-table>
+      <br /><br />
+      <p-table [value]="getProductNamesByType( 'long' )" dataKey="language" editMode="row" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="4" class="bold center">Nazwy długie</th>
+          </tr>
+          <tr>
+            <th style="width: 50px;">Lp.</th>
+            <th>Język</th>
+            <th>Nazwa</th>
+            <th style="width: 50px;"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+          <tr [pEditableRow]="product">
+            <td>{{ri+1}}</td>
+            <td>{{product.language}} - {{getLanguageByIso( product.language )}}</td>
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" style="width: 100%;"
+                         [(ngModel)]="product.name">
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{product.name}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td style="text-align:center">
+              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-save" (click)="onRowEditSave(product)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(product, ri)" style="margin-left: 10px;" class="p-button-rounded p-button-text p-button-danger"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <th style="width:8rem"></th>
+            <th><p-dropdown appendTo="body" id="languagelong" [style]="{'width':'100%'}" filter="true"
+                            [options]="getLangagesLeft('long')"
+                            [(ngModel)]="newLong.language"
+                            [pTooltip]="getErrorMessage('languagelong')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></th>
+            <th><input pInputText id="namelong" style="width: 100%;" type="text"
+                       [(ngModel)]="newLong.name"
+                       (keyup)="validField('namelong')"
+                       [pTooltip]="getErrorMessage('namelong')" tooltipStyleClass="form-error" tooltipPosition="top"></th>
+            <th style="width:8rem">
+              <button pButton type="button" icon="pi pi-save" class="ui-button-success" style="margin-right: .5em" (click)="addName(newLong, 'long')"></button>
+            </th>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Stany/ilości" leftIcon="pi pi-exclamation-triangle" headerStyleClass="stany-ilosci">
+      <p-table [value]="[product]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td colspan="6" class="bold center">Stany ostrzegawcze</td>
+          </tr>
+          <tr>
+            <td class="bold right">Hurtowy</td>
+            <td><input pInputText id="availabilityWarning" style="width: 150px;" mode="decimal" type="number" [min]="0" [step]="1"
+                      (change)="validField('availabilityWarning')" (keyup)="validField('availabilityWarning')"
+                      [(ngModel)]="product.availabilityWarning"
+                      [pTooltip]="getErrorMessage('availabilityWarning')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Stany alarmowe</td>
+          </tr>
+          <tr>
+            <td class="bold right">Hurtowy</td>
+            <td><input pInputText id="availabilityAlert"  style="width: 150px;" type="number" [min]="0" [step]="1"
+                      (change)="validField('availabilityAlert')" (keyup)="validField('availabilityAlert')"
+                      [(ngModel)]="product.availabilityAlert"
+                      [pTooltip]="getErrorMessage('availabilityAlert')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Detal</td>
+            <td><input pInputText id="retailAlert" style="width: 150px;" type="number" [min]="0" [step]="1"
+                      (change)="validField('retailAlert')" (keyup)="validField('retailAlert')"
+                      [(ngModel)]="product.retailAlert"
+                      [pTooltip]="getErrorMessage('retailAlert')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Limity</td>
+          </tr>
+          <tr>
+            <td class="bold right">Limit hurtowy</td>
+            <td><input pInputText id="maxOrder" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('maxOrder')" (keyup)="validField('maxOrder')"
+                       [(ngModel)]="product.maxOrder"
+                       [pTooltip]="getErrorMessage('maxOrder')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Inne</td>
+          </tr>
+          <tr>
+            <td class="bold right">Ilość w opakowaniu zbiorczym</td>
+            <td><input pInputText id="collectiveQuantity" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('collectiveQuantity')" (keyup)="validField('collectiveQuantity')"
+                       [(ngModel)]="product.collectiveQuantity"
+                       [pTooltip]="getErrorMessage('collectiveQuantity')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Miary" leftIcon="pi pi-sliders-v" headerStyleClass="miary">
+      <p-table [value]="[product]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td colspan="6" class="bold center">Wymiary pudełka</td>
+          </tr>
+          <tr>
+            <td class="bold right">Wysokość (cm)</td>
+            <td><input pInputText id="height" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('height')" (keyup)="validField('height')"
+                       [(ngModel)]="product.height"
+                       [pTooltip]="getErrorMessage('height')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Szerokość (cm)</td>
+            <td><input pInputText id="width" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('width')" (keyup)="validField('width')"
+                       [(ngModel)]="product.width"
+                       [pTooltip]="getErrorMessage('width')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Długość (cm)</td>
+            <td><input pInputText id="length" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('length')" (keyup)="validField('length')"
+                       [(ngModel)]="product.length"
+                       [pTooltip]="getErrorMessage('length')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Wymiary opakowania zbiorczego</td>
+          </tr>
+          <tr>
+            <td class="bold right">Wysokość (cm)</td>
+            <td><input pInputText id="collectivelyHeight" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('collectivelyHeight')" (keyup)="validField('collectivelyHeight')"
+                       [(ngModel)]="product.collectivelyHeight"
+                       [pTooltip]="getErrorMessage('collectivelyHeight')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Szerokość (cm)</td>
+            <td><input pInputText id="collectivelyWidth" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('collectivelyWidth')" (keyup)="validField('collectivelyWidth')"
+                       [(ngModel)]="product.collectivelyWidth"
+                       [pTooltip]="getErrorMessage('collectivelyWidth')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Długość (cm)</td>
+            <td><input pInputText id="collectivelyLength" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('collectivelyLength')" (keyup)="validField('collectivelyLength')"
+                       [(ngModel)]="product.collectivelyLength"
+                       [pTooltip]="getErrorMessage('collectivelyLength')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td colspan="6" class="bold center">Wagi</td>
+          </tr>
+          <tr>
+            <td class="bold right">Bez pudełka (kg)</td>
+            <td><input pInputText id="weightNetto" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('weightNetto')" (keyup)="validField('weightNetto')"
+                       [(ngModel)]="product.weightNetto"
+                       [pTooltip]="getErrorMessage('weightNetto')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">W pudełku (kg)</td>
+            <td><input pInputText id="weight" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('weight')" (keyup)="validField('weight')"
+                       [(ngModel)]="product.weight"
+                       [pTooltip]="getErrorMessage('weight')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Opakowania zbiorczego (kg)</td>
+            <td><input pInputText id="collectivelyWeight" style="width: 150px;" type="number" [min]="0" [step]="1"
+                       (change)="validField('collectivelyWeight')" (keyup)="validField('collectivelyWeight')"
+                       [(ngModel)]="product.collectivelyWeight"
+                       [pTooltip]="getErrorMessage('collectivelyWeight')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Dodatkowe informacje" leftIcon="pi pi-info-circle" headerStyleClass="dodatkowe-informacje">
+      <p-table [value]="[product]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <td class="bold right">Dodał/a</td>
+            <td>{{product.addBy}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">Data dodania</td>
+            <td>{{product.addDate}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">Data ostatniej zmiany</td>
+            <td>{{product.lastChangeDate}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel *ngIf="product.id > 0" header="Pliki" leftIcon="pi pi-paperclip">
+      <app-pliki [source]="'product'" [sourceId]="product.id"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+  <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 1" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="saveProduct( product )"></button>
+  <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 2" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-warning"></button>
+</div>

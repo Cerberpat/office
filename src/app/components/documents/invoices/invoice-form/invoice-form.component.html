@@ -1,0 +1,179 @@
+<p-toast></p-toast>
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane ogólne" leftIcon="pi pi-id-card" headerStyleClass="dane-ogolne">
+      <p-table [value]="[invoice]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <th colspan="4" class="bold center belka">Dane ogólne</th>
+          </tr>
+          <tr>
+            <td class="bold right">Numer faktury</td>
+            <td><input pInputText id="number" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('number')"
+                       [(ngModel)]="invoice.number"
+                       [pTooltip]="getErrorMessage('number')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Rodzaj faktury</td>
+            <td><p-dropdown appendTo="body" id="type" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz typ"
+                            (onChange)="validField('type')"
+                            [options]="typeList"
+                            [(ngModel)]="invoice.type"
+                            [pTooltip]="getErrorMessage('type')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Waluta</td>
+            <td *ngIf="currency.length>0"><p-dropdown appendTo="body" id="currency" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz walutę"
+                            (onChange)="validField('currency')"
+                            [options]="currency"
+                            [(ngModel)]="invoice.currency"
+                            [pTooltip]="getErrorMessage('currency')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Firma Wystawiająca</td>
+            <td><p-dropdown *ngIf="companies.length > 0" appendTo="body" id="companyId" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz firmę"
+                            (onChange)="validField('companyId')"
+                            [options]="companies"
+                            [(ngModel)]="invoice.companyId"
+                            [pTooltip]="getErrorMessage('companyId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Miejsce wystawienia</td>
+            <td><input pInputText id="issuePlace" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('issuePlace')"
+                       [(ngModel)]="invoice.issuePlace"
+                       [pTooltip]="getErrorMessage('issuePlace')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Firma kurierska</td>
+            <td><p-dropdown *ngIf="transportComp.length > 0" appendTo="body" id="transportCompany" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz transport"
+                            (onChange)="validField('transportCompany')"
+                            [options]="transportComp"
+                            [(ngModel)]="invoice.transportCompany"
+                            [pTooltip]="getErrorMessage('transportCompany')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Numer wysyłki</td>
+            <td><input pInputText id="trackingNumber" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('trackingNumber')"
+                       [(ngModel)]="invoice.trackingNumber"
+                       [pTooltip]="getErrorMessage('trackingNumber')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Data wystawienia</td>
+            <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="invoice.issueDate" [showTime]="false" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+            <td class="bold right">Data sprzedaży</td>
+            <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="invoice.saleDate" [showTime]="false" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+          </tr>
+          <tr>
+            <td class="bold right">Forma płatności</td>
+            <td><p-dropdown *ngIf="paymentForms.length > 0" appendTo="body" id="paymentForm" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz transport"
+                            (onChange)="validField('paymentForm')"
+                            [options]="paymentForms"
+                            [(ngModel)]="invoice.paymentForm"
+                            [pTooltip]="getErrorMessage('paymentForm')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Termin płatności (w dniach)</td>
+            <td><input pInputText id="paymentTerm" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('paymentTerm')"
+                       [(ngModel)]="invoice.paymentTerm"
+                       [pTooltip]="getErrorMessage('paymentTerm')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Komentarz</td>
+            <td colspan="3"><textarea [rows]="5" [cols]="30" id="comment" [style]="{'width':'100%'}"
+                                      [(ngModel)]="invoice.comment"
+                                      [pTooltip]="getErrorMessage('comment')" tooltipStyleClass="form-error" tooltipPosition="top" pInputTextarea autoResize="autoResize"></textarea></td>
+          </tr>
+          <tr>
+            <td class="bold right">Dodał/a</td>
+            <td>{{invoice.createdBy}}</td>
+            <td class="bold right">Data utworzenia</td>
+            <td>{{formatData(invoice.createdAt, 'YYYY-MM-dd H:mm:ss')}}</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">Płatności</td>
+          </tr>
+          <tr>
+            <th colspan="4" class="bold center belka">Dane odbiorcy</th>
+          </tr>
+          <tr>
+            <td class="bold right">Wczytaj dane klienta hurtowego</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="bold right">Nazwa odbiorcy</td>
+            <td><input pInputText id="billingAddress.name" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('billingAddress.name')"
+                       [(ngModel)]="invoice.billingAddress.name"
+                       [pTooltip]="getErrorMessage('billingAddress.name')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Ulica</td>
+            <td><input pInputText id="billingAddress.street" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('billingAddress.street')"
+                       [(ngModel)]="invoice.billingAddress.street"
+                       [pTooltip]="getErrorMessage('billingAddress.street')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Nr. budynku / lokalu</td>
+            <td><input pInputText id="billingAddress.buildingNumber" [style]="{'width':'49%'}" type="text"
+                       (keyup)="validField('billingAddress.buildingNumber')"
+                       [(ngModel)]="invoice.billingAddress.buildingNumber"
+                       [pTooltip]="getErrorMessage('billingAddress.buildingNumber')" tooltipStyleClass="form-error" tooltipPosition="top">
+              /
+              <input pInputText id="billingAddress.apartmentNumber" [style]="{'width':'49%'}" type="text"
+                     (keyup)="validField('billingAddress.apartmentNumber')"
+                     [(ngModel)]="invoice.billingAddress.apartmentNumber"
+                     [pTooltip]="getErrorMessage('billingAddress.apartmentNumber')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Kraj</td>
+            <td><p-dropdown *ngIf="countries.length > 0" appendTo="body" id="billingAddress.countryId" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz Kraj"
+                            (onChange)="validField('billingAddress.countryId')"
+                            [options]="countries"
+                            [(ngModel)]="invoice.billingAddress.countryId"
+                            [pTooltip]="getErrorMessage('billingAddress.countryId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Nip</td>
+            <td><input pInputText id="billingAddress.nip" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('billingAddress.nip')"
+                       [(ngModel)]="invoice.billingAddress.nip"
+                       [pTooltip]="getErrorMessage('billingAddress.nip')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Odebrał</td>
+            <td><input pInputText id="received" [style]="{'width':'100%'}" type="text"
+                       (keyup)="validField('received')"
+                       [(ngModel)]="invoice.received"
+                       [pTooltip]="getErrorMessage('received')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr *ngIf="invoice.setNr>0">
+            <td colspan="4" class="bold center belka padding_0 borderless">
+              <app-product-list [wholesellersId]="invoice.wholesalerId" [setNr]="invoice.setNr"></app-product-list>
+            </td>
+          </tr>
+          <tr *ngIf="invoice.setNr>0">
+            <td colspan="4" class="bold center belka padding_0 borderless">
+              <app-product-suggest [wholesellersId]="invoice.wholesalerId" [setNr]="invoice.setNr" [company]="invoice.companyId"></app-product-suggest>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 1" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="saveChanges()"></button>
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 2" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-warning"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Dokumenty powiązane" leftIcon="pi pi-id-card" headerStyleClass="dokumenty-powiazane">
+      <app-document-links [setNr]="invoice.setNr"></app-document-links>
+    </p-tabPanel>
+    <p-tabPanel header="Komentarze" leftIcon="pi pi-id-card" headerStyleClass="komentarze">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel header="Załączniki" leftIcon="pi pi-id-card" headerStyleClass="zalaczniki">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>

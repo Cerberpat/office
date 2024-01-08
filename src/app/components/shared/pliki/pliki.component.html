@@ -1,0 +1,36 @@
+<p-fileUpload name="data[]" url="https://office.next77.pl/RestApi/Pliki/upload.php?pochodzenie={{source}}&pochodzenieId={{sourceId}}" (onUpload)="onUpload($event)"
+              multiple="multiple" accept="image/*" maxFileSize="2000000">
+  <ng-template pTemplate="content">
+    <ul *ngIf="uploadedFiles.length">
+      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+    </ul>
+  </ng-template>
+</p-fileUpload>
+
+<p-panel header="Pliki" [toggleable]="false" [style]="{'margin-top':'20px'}">
+  <p *ngFor="let p of pliki.files">
+    <i style="cursor: pointer; margin-right: 5px;" class="pi pi-trash" (click)="deleteImage(p.title)"></i>
+    <a target="_blank" href="{{p.source}}">{{p.title}}</a>
+  </p>
+</p-panel>
+
+<p-panel header="Obrazy" [toggleable]="false" [style]="{'margin-top':'20px'}">
+  <p-galleria [value]="pliki.images" [(visible)]="displayCustom" [(activeIndex)]="activeIndex" [responsiveOptions]="responsiveOptions" [containerStyle]="{'max-width': '850px'}" [numVisible]="7"
+               [circular]="true" [fullScreen]="true" [showItemNavigators]="true" [showThumbnails]="false" [baseZIndex]="100000">
+    <ng-template pTemplate="item" let-item>
+      <img [src]="item.previewImageSrc" style="width: 100%; display: block;"/>
+    </ng-template>
+    <ng-template pTemplate="thumbnail" let-item>
+      <div class="p-grid p-nogutter p-justify-center">
+        <img [src]="item.thumbnailImageSrc" style="display: block;"/>
+      </div>
+    </ng-template>
+  </p-galleria>
+  <div *ngIf="pliki.images" class="p-grid container">
+    <div *ngFor="let image of pliki.images; let index = index;" class="p-col-3 child" key="index">
+      <i style="cursor: pointer;" class="pi pi-trash" (click)="deleteImage(image.title)"></i>
+      <img [src]="image.thumbnailImageSrc" [alt]="image.alt" style="cursor: pointer; width: 100%; height: auto; padding: 3px;" (click)="imageClick(index)"/>
+    </div>
+  </div>
+</p-panel>
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,36 @@
+<div class="doNotPrint" style="width: 100%; text-align: right;">
+  <button type="button" pButton icon="pi pi-print" iconPos="left" label="DRUK" class="ui-button-success" ngxPrint printSectionId="print-section" style="margin-right: 5px;"></button>
+  <br /><br />
+</div>
+<div id="print-section" style="width: 100%; float: left;">
+  <div style="float: left; text-align: center;">
+    {{this.wlasciciel.imie}} {{this.wlasciciel.nazwisko}}<br />
+    Imię i nazwisko
+  </div>
+  <div style="float: right; text-align: center;">
+    {{this.obj.dodano.toString() | slice:0:10}}<br />
+    data
+  </div>
+  <div style="width: 100%; float: left; margin-top: 50px;">
+    <p style="text-align: center; font-weight: bold;">WNIOSEK URLOPOWY</p>
+    <br />
+    Proszę o udzielenie
+    <span *ngIf="this.obj.type=='wyp' || this.obj.type=='godz'">urlopu wypoczynkowego</span>
+    <span *ngIf="this.obj.type=='nz'">urlopu na żądanie</span>
+    <span *ngIf="this.obj.type=='l4'">zwolnioenienia lekarskiego</span>
+    <span *ngIf="this.obj.type=='odz'">opieki nad dzieckiem zdrowym</span>
+    <span *ngIf="this.obj.type=='odc'">opieki nad dzieckiem chorym</span>
+    <span *ngIf="this.obj.type=='bez'">urlopu bezpłatnego</span>
+    <span *ngIf="this.obj.type=='oko'">urlopu okolicznościowego</span>
+     w liczbie {{this.dni}} dni.
+    Pierwszy dzień urlopu {{this.obj.start}} Ostatni dzień urlopu {{this.obj.stop}}.
+  </div>
+  <div style="width: 100%; float: right; text-align: center; margin-top: 20px;">
+    wniosek złożony elektronicznie (nie wymaga podpisu)
+  </div>
+  <div style="width: 100%; float: right; text-align: right; margin-top: 50px;">
+    {{this.akceptowal.imie}} {{this.akceptowal.nazwisko}}<br />
+    (zaakceptował)
+  </div>
+
+</div>

@@ -1,0 +1,216 @@
+<p-toast></p-toast>
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane ogólne" leftIcon="pi pi-id-card" headerStyleClass="dane-ogolne">
+      <p-table [value]="[order]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <th colspan="4" class="bold center belka">Dane ogólne</th>
+          </tr>
+          <tr>
+            <td class="bold right">Status biurowy</td>
+            <td *ngIf="orderStatuses.length>0">
+              <p-dropdown appendTo="body" optionLabel="name" id="orderStatusId" [style]="{'width':'100%'}"
+                          placeholder="Wybierz status..."
+                          (onChange)="validField('orderStatusId')"
+                          [options]="orderStatuses"
+                          [(ngModel)]="order.orderStatus"
+                          [pTooltip]="getErrorMessage('orderStatusId')" tooltipStyleClass="form-error" tooltipPosition="top">
+              </p-dropdown>
+            </td>
+            <td class="bold right">Status magazynowy</td>
+            <td *ngIf="warehouseStatuses.length>0">{{(order.warehouseStatus!=null ? order.warehouseStatus.name : '')}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">Data zakupu</td>
+            <td>{{formatData(order.purchaseTime, 'YYYY-MM-dd')}}</td>
+            <td class="bold right">Data wysłania</td>
+            <td>{{formatData(order.shippedOn, 'YYYY-MM-dd')}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">Źródło</td>
+            <td>&nbsp;</td>
+            <td class="bold right">Dodał/a</td>
+            <td>{{(order.createdByObj!=null ? order.createdByObj.imie + ' ' + order.createdByObj.nazwisko : '')}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">Wybór klienta</td>
+            <td *ngIf="wholesellers.length>0"><p-dropdown appendTo="body" id="wholesalerId" optionLabel="name" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            (onChange)="validField('wholesalerId');copyWholesellrAdres()"
+                            [options]="wholesellers"
+                            [(ngModel)]="order.wholesaler"
+                            [pTooltip]="getErrorMessage('wholesalerId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Opiekun klienta</td>
+            <td>{{(order.wholesaler!=null && order.wholesaler.managerObj!=null ? order.wholesaler.managerObj.imie + ' ' + order.wholesaler.managerObj.nazwisko : '')}}</td>
+          </tr>
+          <tr>
+            <td class="bold right">Metoda płatności</td>
+            <td *ngIf="paymentForms.length>0"><p-dropdown appendTo="body" id="paymentMethodId" optionLabel="name" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            (onChange)="validField('paymentMethodId')"
+                            [options]="paymentForms"
+                            [(ngModel)]="order.paymentMethod"
+                            [pTooltip]="getErrorMessage('paymentMethodId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td class="bold right">Firma kurierska</td>
+            <td *ngIf="transportComp.length>0"><p-dropdown appendTo="body" optionLabel="name" id="trackingCompanyId" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            (onChange)="validField('trackingCompanyId')"
+                            [options]="transportComp"
+                            [(ngModel)]="order.transportCompany"
+                            [pTooltip]="getErrorMessage('trackingCompanyId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Komentarz wspólny</td>
+            <td><textarea [rows]="5" [cols]="30" id="comment" [style]="{'width':'100%'}"
+                          [(ngModel)]="order.comment"
+                          [pTooltip]="getErrorMessage('comment')" tooltipStyleClass="form-error" tooltipPosition="top" pInputTextarea autoResize="autoResize"></textarea></td>
+            <td class="bold right">Komentarz wewnętrzny</td>
+            <td><textarea [rows]="5" [cols]="30" id="commentCompany" [style]="{'width':'100%'}"
+                          [(ngModel)]="order.commentCompany"
+                          [pTooltip]="getErrorMessage('commentCompany')" tooltipStyleClass="form-error" tooltipPosition="top" pInputTextarea autoResize="autoResize"></textarea></td>
+          </tr>
+          <tr>
+            <th colspan="4" class="bold center belka">Kontakt</th>
+          </tr>
+          <tr>
+            <td class="bold right">Telefon</td>
+            <td><input pInputText id="phone" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('phone')"
+                       [(ngModel)]="order.billingAddress.phone"
+                       [pTooltip]="getErrorMessage('phone')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td class="bold right">Mail</td>
+            <td><input pInputText id="email" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('email')"
+                       [(ngModel)]="order.billingAddress.email"
+                       [pTooltip]="getErrorMessage('email')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <th colspan="2" class="bold center belka">Dane faktury</th>
+            <th colspan="2" class="bold center belka">Dane wysyłki</th>
+          </tr>
+          <tr>
+            <td>Firma/Osoba:</td>
+            <td><input pInputText id="billingPerson" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('billingPerson')"
+                       [(ngModel)]="order.billingAddress.name"
+                       [pTooltip]="getErrorMessage('billingPerson')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td>Firma/Osoba:</td>
+            <td><input pInputText id="shippingPerson" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingPerson')"
+                       [(ngModel)]="order.shippingAddress.name"
+                       [pTooltip]="getErrorMessage('shippingPerson')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td>Adres:</td>
+            <td><input pInputText id="billingStreet" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('billingAddress')"
+                       [(ngModel)]="order.billingAddress.street"
+                       [pTooltip]="getErrorMessage('billingAddress')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td>Adres:</td>
+            <td><input pInputText id="shippingStreet" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingAddress')"
+                       [(ngModel)]="order.shippingAddress.street"
+                       [pTooltip]="getErrorMessage('shippingAddress')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td>Nr. budynku / mieszkania:</td>
+            <td><input pInputText id="billingBuilding" [style]="{'width':'fit-content'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('billingBuilding')"
+                       [(ngModel)]="order.billingAddress.buildingNumber"
+                       [pTooltip]="getErrorMessage('billingBuilding')" tooltipStyleClass="form-error" tooltipPosition="top"> /
+                <input pInputText id="billingApartment" [style]="{'width':'fit-content'}" type="text" [min]="0" [step]="1"
+                     (keyup)="validField('billingApartment')"
+                     [(ngModel)]="order.billingAddress.apartmentNumber"
+                     [pTooltip]="getErrorMessage('billingApartment')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td>Nr. budynku / mieszkania:</td>
+            <td><input pInputText id="shippingBuildting" [style]="{'width':'fit-content'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingBuildting')"
+                       [(ngModel)]="order.shippingAddress.buildingNumber"
+                       [pTooltip]="getErrorMessage('shippingBuildting')" tooltipStyleClass="form-error" tooltipPosition="top"> /
+                <input pInputText id="shippingApartment" [style]="{'width':'fit-content'}" type="text" [min]="0" [step]="1"
+                     (keyup)="validField('shippingApartment')"
+                     [(ngModel)]="order.shippingAddress.apartmentNumber"
+                     [pTooltip]="getErrorMessage('shippingApartment')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td>Miasto:</td>
+            <td><input pInputText id="billingCity" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('billingCity')"
+                       [(ngModel)]="order.billingAddress.city"
+                       [pTooltip]="getErrorMessage('billingCity')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td>Miasto:</td>
+            <td><input pInputText id="shippingCity" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingCity')"
+                       [(ngModel)]="order.shippingAddress.city"
+                       [pTooltip]="getErrorMessage('shippingCity')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td>Kod pocztowy:</td>
+            <td><input pInputText id="billingZipCode" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('billingZipCode')"
+                       [(ngModel)]="order.billingAddress.zipCode"
+                       [pTooltip]="getErrorMessage('billingZipCode')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td>Kod pocztowy:</td>
+            <td><input pInputText id="shippingZipCode" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingZipCode')"
+                       [(ngModel)]="order.shippingAddress.zipCode"
+                       [pTooltip]="getErrorMessage('shippingZipCode')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td>Kraj:</td>
+            <td *ngIf="countries.length>0"><p-dropdown appendTo="body" id="billingCountry" [style]="{'width':'100%'}" filter="true"
+                            placeholder="Wybierz kraj..."
+                            (onChange)="validField('billingCountry')"
+                            [options]="countries"
+                            [(ngModel)]="order.billingAddress.countryId"
+                            [pTooltip]="getErrorMessage('billingCountry')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+            <td>Kraj:</td>
+            <td *ngIf="countries.length>0"><p-dropdown appendTo="body" id="shippingCountry" [style]="{'width':'100%'}" filter="true"
+                            placeholder="Wybierz kraj..."
+                            (onChange)="validField('shippingCountry')"
+                            [options]="countries"
+                            [(ngModel)]="order.shippingAddress.countryId"
+                            [pTooltip]="getErrorMessage('shippingCountry')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td>Nip:</td>
+            <td><input pInputText id="billingNip" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('billingNip')"
+                       [(ngModel)]="order.billingAddress.nip"
+                       [pTooltip]="getErrorMessage('billingNip')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+            <td>Uwagi do wysyłki:</td>
+            <td><textarea [rows]="3" [cols]="30" id="shippingComment" [style]="{'width':'100%'}"
+                          [(ngModel)]="order.shippingComment"
+                          [pTooltip]="getErrorMessage('shippingComment')" tooltipStyleClass="form-error" tooltipPosition="top" pInputTextarea autoResize="autoResize"></textarea></td>
+          </tr>
+          <tr>
+            <th colspan="4" class="bold center belka">Produkty</th>
+          </tr>
+          <tr *ngIf="order.setNr>0">
+            <td colspan="4" class="bold center belka padding_0 borderless">
+              <app-product-list [wholesellersId]="order.wholesalerId" [setNr]="order.setNr"></app-product-list>
+            </td>
+          </tr>
+          <tr *ngIf="order.setNr>0">
+            <td colspan="4" class="bold center belka padding_0 borderless">
+              <app-product-suggest [wholesellersId]="order.wholesalerId" [setNr]="order.setNr" [company]="order.company"></app-product-suggest>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="bold center belka">
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 1" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="saveChanges()"></button>
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 2" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-warning"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Dokumenty powiązane" leftIcon="pi pi-id-card" headerStyleClass="dokumenty-powiazane">
+      <app-document-links [setNr]="order.setNr"></app-document-links>
+    </p-tabPanel>
+    <p-tabPanel header="Komentarze" leftIcon="pi pi-id-card" headerStyleClass="komentarze">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel header="Załączniki" leftIcon="pi pi-id-card" headerStyleClass="zalaczniki">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>

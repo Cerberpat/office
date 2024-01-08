@@ -1,0 +1,111 @@
+<p-toast></p-toast>
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dzielenie dostawy" headerStyleClass="Dzielenie-dostawy">
+      <p-table [value]="[shipping]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <th colspan="4" class="bold center belka">Dane ogólne</th>
+          </tr>
+          <tr>
+            <td class="bold right">Data dostawy</td>
+            <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="[]" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="shipping.deliveryDate" [showTime]="false" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+          </tr>
+          <tr>
+            <td class="bold right">Tytuł</td>
+            <td><input pInputText id="title" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('title')"
+                       [(ngModel)]="shipping.title"
+                       [pTooltip]="getErrorMessage('title')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Firma</td>
+            <td><p-dropdown *ngIf="companies.length > 0" appendTo="body" id="companyId" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz firmę"
+                            (onChange)="validField('companyId')"
+                            [options]="companies"
+                            [(ngModel)]="shipping.companyId"
+                            [pTooltip]="getErrorMessage('companyId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Uwagi</td>
+            <td><input pInputText id="shippingComment" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingComment')"
+                       [(ngModel)]="shipping.comment"
+                       [pTooltip]="getErrorMessage('shippingComment')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td [colSpan]="2"><button pButton *ngIf="saveDisplay > 0" type="button" iconPos="left" label="Podziel" style="width: 100%;" (click)="splitShipping()"></button></td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-table #dt [value]="shippingItems" [paginator]="false" sortField="name" [sortOrder]="1" [customSort]="true" [autoLayout]="true" [style]="{'margin-top': '30px'}">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th></th>
+            <th *ngFor="let col of colsPos" [pSortableColumn]="col.field">
+              {{col.header}}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+          <tr [pSelectableRow]="rowData" class="item-{{rowData.id}}">
+            <td></td>
+            <td *ngFor="let c of colsPos">
+              <span>{{rowData[c.field]}}</span>
+            </td>
+            <td style="text-align:center">
+              <input pInputText style="width: 75px; margin: auto;" id="item-{{rowData.id}}" type="number" [(ngModel)]="rowData.splitQuantity" (keyup)="validField()" [min]="0" [step]="1" required>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <td [colSpan]="6"><button pButton *ngIf="saveDisplay > 0" type="button" iconPos="left" label="Podziel" style="width: 100%;" (click)="splitShipping()"></button></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Łączenie dostaw" [style]="{'transform': 'rotate(180deg)'}" headerStyleClass="laczenie-dostawy">
+      <p-table [value]="[shipping]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <th colspan="4" class="bold center belka"><span style="color: red;">Ważne:</span> Wybrana dostawa zostanie usunięta, a jej produkty dodane do bierzącego dokumentu.</th>
+          </tr>
+          <tr>
+            <td class="bold right">Wybierz dostawę</td>
+            <td><p-dropdown *ngIf="shippingsSellect.length > 0" appendTo="body" id="shippingID" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz dostawę"
+                            (onChange)="getShippingItemsJoin()"
+                            [options]="shippingsSellect"
+                            [(ngModel)]="shippingMergeId" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td [colSpan]="2"><button pButton *ngIf="saveDisplay > 0" type="button" iconPos="left" label="Połącz dostawy" style="width: 100%;" (click)="joinShipping()"></button></td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-table *ngIf="shippingItemsJoin.length > 0" #dt [value]="shippingItemsJoin" [paginator]="false" [autoLayout]="true" [style]="{'margin-top': '30px'}">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th colspan="4">Podgląd wybranej dostawy</th>
+          </tr>
+          <tr>
+            <th *ngFor="let col of colsPos" [pSortableColumn]="col.field">
+              {{col.header}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+          <tr [pSelectableRow]="rowData" class="item-{{rowData.id}}">
+            <td *ngFor="let c of colsPos">
+              <span>{{rowData[c.field]}}</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+  </p-tabView>
+</div>

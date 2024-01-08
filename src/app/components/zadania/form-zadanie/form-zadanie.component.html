@@ -1,0 +1,69 @@
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane" leftIcon="pi pi-id-card">
+      <p-table [value]="[{}]" [autoLayout]="true">
+        <ng-template pTemplate="body" let-prof>
+        <tr>
+          <td style="width:20%;" class="bold">Wykonawca</td>
+          <td style="width:30%;"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="profile" dataKey="id" optionLabel="name" optionValue="id" [(ngModel)]="zadanieTemp.wykonawca" [showClear]="true" filter="true" placeholder="Wybierz osobę..."></p-dropdown></td>
+          <td style="width:20%;" class="bold">Osoba zatwierdzająca</td>
+          <td style="width:30%;"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="profile" dataKey="id" optionLabel="name" optionValue="id" [(ngModel)]="zadanieTemp.zatwierdzajacy" [showClear]="true" filter="true" placeholder="Wybierz osobę..."></p-dropdown></td>
+        </tr>
+        <tr>
+          <td class="bold">Nazwa</td>
+          <td><input type="text" pInputText [(ngModel)]="zadanieTemp.nazwa" [style]="{'width':'100%'}"></td>
+          <td class="bold">Szacowany czas zadania</td>
+          <td>
+            Godzin&nbsp;<p-inputNumber [(ngModel)]="szacowanyCzas.godziny" inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="1000" [step]="1"></p-inputNumber>
+            Minut&nbsp;<p-inputNumber [(ngModel)]="szacowanyCzas.minuty" inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="60" [step]="1"></p-inputNumber>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td class="bold">Deadline</td>
+          <td>
+            <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="zadanieTemp.deadline" [showIcon]="true" dateFormat="yy-mm-dd" placeholder="Deadline" appendTo="body"></p-calendar>
+          </td>
+        </tr>
+        <tr *ngIf="zadanie.id >0">
+          <td class="bold">Czas wykonania zadania</td>
+          <td>
+            Godzin&nbsp;<p-inputNumber [(ngModel)]="czasTrwania.godziny" inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="1000" [step]="1"></p-inputNumber>
+            Minut&nbsp;<p-inputNumber [(ngModel)]="czasTrwania.minuty" inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="60" [step]="1"></p-inputNumber>
+          </td>
+        </tr>
+          <tr>
+            <td class="bold">Opis</td>
+            <td colspan="3"><textarea style="width: 100%;" [(ngModel)]="zadanieTemp.opis" rows="5" cols="30" pInputTextarea placeholder="Opis"></textarea></td>
+          </tr>
+        <tr>
+          <td style="text-align: left;" colspan="2">
+            Dodał/a: {{nazwaUseraById( zadanieTemp.dodal )}}, {{zadanieTemp.czasDodania}}
+          </td>
+          <td style="text-align: right;" colspan="2">
+            <button pButton type="button" icon="pi pi-check" class="ui-button-success" *ngIf="zadanie.id === undefined" style="margin-right: .5em" (click)="saveadd()"></button>
+            <button pButton type="button" icon="pi pi-check" class="ui-button-success" *ngIf="zadanie.id >0" style="margin-right: .5em" (click)="saveEdit()"></button>
+            <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="cancelEdit()"></button>
+          </td>
+        </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Historia/chat" leftIcon="pi pi-folder-open" *ngIf="sourceId > 0">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel header="Pliki" leftIcon="pi pi-paperclip" *ngIf="sourceId > 0">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+<p-dialog [(visible)]="display">
+  <p-header>
+    Komunikat systemu
+  </p-header>
+  <p [innerHTML]="dialogMessage"></p>
+  <p-footer>
+    <button pButton pRipple type="button" label="Zamknij" class="p-button-warning float-r" (click)="closeDialog()"></button>
+  </p-footer>
+</p-dialog>

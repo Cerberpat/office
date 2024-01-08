@@ -1,0 +1,43 @@
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane" leftIcon="pi pi-id-card">
+      <p-table [value]="['']" [autoLayout]="true">
+        <ng-template pTemplate="body" let-prof>
+          <tr>
+            <td class="bold">Nazwa</td>
+            <td><input type="text" pInputText [(ngModel)]="profilTemp.nazwa" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Adres</td>
+            <td><input type="text" pInputText [(ngModel)]="profilTemp.adres" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Kod pocztowy</td>
+            <td><input type="text" pInputText [(ngModel)]="profilTemp.kodPocztowy" [style]="{'width':'100%'}"></td>
+            <td class="bold">Miasto</td>
+            <td><input type="text" pInputText [(ngModel)]="profilTemp.miasto" [style]="{'width':'100%'}"></td>
+          </tr><tr>
+            <td class="bold">Kraj</td>
+            <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="countries" dataKey="id" optionLabel="name" [(ngModel)]="profilTemp.kraj" [showClear]="true" filter="true"></p-dropdown></td>
+          </tr><tr>
+            <td class="bold">Telefon</td>
+            <td><input type="text" pInputText [(ngModel)]="profilTemp.telefon" [style]="{'width':'100%'}"></td>
+            <td class="bold">mail</td>
+            <td><input type="text" pInputText [(ngModel)]="profilTemp.mail" [style]="{'width':'100%'}"></td>
+          </tr>
+          <tr>
+            <td style="text-align: right;" colspan="4">
+              <button pButton type="button" icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="saveEdit()"></button>
+              <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="cancelEdit()"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Dodatkowy kontakt/adres" leftIcon="pi pi-envelope">
+      <app-dodatkowy-adres [source]="source" [sourceId]="sourceId"></app-dodatkowy-adres>
+    </p-tabPanel>
+    <p-tabPanel header="Pliki" leftIcon="pi pi-paperclip">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+

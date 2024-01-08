@@ -1,0 +1,65 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<p-table #dt *ngIf="privilages!=[]" [columns]="cols" [value]="privilages" [paginator]="false" [autoLayout]="true">
+  <ng-template pTemplate="header" let-columns>
+    <tr *ngIf="profile.id==0">
+      <th [colSpan]="2">Wybierz szablon do edycji</th>
+      <th [colSpan]="2">Dodaj szablon</th>
+    </tr>
+    <tr *ngIf="profile.id==0">
+      <td [colSpan]="2"><p-dropdown *ngIf="shemaList.length > 0" optionValue="id" optionLabel="name" appendTo="body" id="shema-id" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                                    placeholder="Wybierz szablon"
+                                    (onChange)="loadShema()"
+                                    [options]="shemaList"
+                                    [(ngModel)]="shema.id"></p-dropdown></td>
+      <td><input pInputText id="shema-name" [style]="{'width': '100%'}" type="text" [(ngModel)]="shema.name" placeholder="Wprowadź nazwę szablonu"></td>
+      <td><button [style]="{'width': '100%'}" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-success" (click)="saveShema()"></button></td>
+    </tr>
+    <tr *ngIf="profile.id > 0">
+      <th [colSpan]="2">Załaduj szablon</th>
+      <th [colSpan]="2">Edytowany profil</th>
+    </tr>
+    <tr *ngIf="profile.id > 0">
+      <td [colSpan]="2"><p-dropdown *ngIf="shemaList.length > 0" optionValue="id" optionLabel="name" appendTo="body" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                                    placeholder="Wybierz szablon"
+                                    (onChange)="loadShema()"
+                                    [options]="shemaList"
+                                    [(ngModel)]="shema.id"></p-dropdown></td>
+      <td [colSpan]="2" class="center bold">{{profile.nazwisko}} {{profile.imie}}</td>
+    </tr>
+    <tr>
+      <td [colSpan]="4">&nbsp;</td>
+    </tr>
+    <tr>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.object+'|'+col.field">
+        {{col.header}}
+        <p-sortIcon *ngIf="col.sortable==1" [field]="col.field"></p-sortIcon>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+    <tr [pSelectableRow]="rowData">
+      <td>
+        {{showIfChanged(rowData.tab)}}
+      </td>
+      <td>
+        {{rowData.specific}}
+      </td>
+      <td>
+        {{rowData.description}}
+      </td>
+      <td class="center">
+        <p-inputSwitch [(ngModel)]="rowData.val"></p-inputSwitch>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <tr>
+      <td [colSpan]="cols.length+1">
+        <button *ngIf="profile.id > 0" style="width: 100%; margin-top: 15px;" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="savePrivs()"></button>
+        <button *ngIf="profile.id == 0" style="width: 100%; margin-top: 15px;" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="saveShemaPrivs()"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -1,0 +1,336 @@
+<p-fieldset *ngIf="logedUser.dostep.toString() == '1' || akceptacjaPrzelozony();" legend="Do akceptacji" [toggleable]="true">
+  <p-table [value]="acceptation" dataKey="type">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Typ urlopu</th>
+        <th>Pracownik wnioskujący</th>
+        <th>Termin urlopu</th>
+        <th>Ilość dni</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+      <tr class="ui-widget-header" *ngIf="logedUser.dostep.toString() == '1' || checkPrzelozony(rowData.wlasciciel)">
+        <td>{{getUrlopName(rowData.type)}}</td>
+        <td>{{getWlascicielName(rowData.wlasciciel)}}</td>
+        <td>{{printZakres(rowData)}}</td>
+        <td>{{getWorkingDays(rowData.start, rowData.stop)}}</td>
+        <td style="text-align: center;" *ngIf="checkPrzelozony(rowData.wlasciciel)">
+          <button pButton type="button" icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="setAcceptation( rowData, 2, 1 )"></button>
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="setAcceptation( rowData, 2, 0 )"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+<br />
+<p-fieldset legend="Kalendarz" [toggleable]="true">
+  <p-fullCalendar [events]="urlopsCalendar" [options]="options"></p-fullCalendar>
+  <ul>
+    <li style="color: #ff8f00;">Urlop - czeka na akceptację</li>
+    <li style="color: #34a835;">Urlop zaakceptowany</li>
+    <li style="color: #66cccc;">Zwolnienie lekarskie</li>
+    <li class="hourly">Urlop zaakceptowany rozliczany godzinowo</li>
+  </ul>
+</p-fieldset>
+<br />
+<p-fieldset legend="Podsumowanie" [toggleable]="true">
+  <p-table [value]="urlops" dataKey="type">
+    <ng-template pTemplate="header">
+      <tr>
+        <th colspan="3"></th>
+        <th>Rok: <p-dropdown [options]="lata" [(ngModel)]="rok" optionLabel="name" (onChange)="reloadZmianaRoku()"></p-dropdown></th>
+      </tr>
+      <tr>
+        <th>Typ urlopu</th>
+        <th>Od dnia</th>
+        <th>Do dnia</th>
+        <th><p-dropdown [style]="{'width':'100%'}" [options]="profileSelectOptions" [(ngModel)]="profileSelected" [showClear]="true" (onChange)="reloadSumtable()" filter="true" *ngIf="logedUser.dostep.toString() == '1'"></p-dropdown></th>
+      </tr>
+      <tr>
+        <td><p-dropdown id="code" optionValue="code" dataKey="code" optionLabel="name" [style]="{'width':'100%'}" [options]="urlopTypesSelect" [(ngModel)]="addUrlopData.type" (onChange)="setCallendarSettings()" placeholder="Wybierz typ" [showClear]="true" filter="true"></p-dropdown></td>
+        <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="(blockWeekends ? [0,6] : [])" [disabledDates]="(blockWeekends ? swietaDates : [])" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="addUrlopData.start" [showTime]="showCalendarTime" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+        <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="(blockWeekends ? [0,6] : [])" [disabledDates]="(blockWeekends ? swietaDates : [])" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="addUrlopData.stop" [showTime]="showCalendarTime" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+        <td><button style="width: 100%;" pButton type="button" label="Dodaj" class="ui-button-raised ui-button-warning" (click)="addUrlop();"></button></td>
+      </tr>
+      <tr>
+        <th>Typ urlopu</th>
+        <th>Przysługująca ilość</th>
+        <th>Wykorzystana ilość</th>
+        <th>Pozostała ilość</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
+      <tr style="background-color: #3f3f3f;" class="ui-widget-header" *ngIf="rowGroupMetadata[rowData.type].index === rowIndex">
+        <td>
+          <a href="#" [pRowToggler]="rowData">
+            <i [ngClass]="expanded ? 'pi pi-fw pi-chevron-circle-down' : 'pi pi-fw pi-chevron-circle-right'"  style="vertical-align: middle;padding-bottom: .1em;"></i>
+            <span>{{getUrlopName(rowData.type)}}</span>
+          </a>
+        </td>
+        <td style="font-weight: bold;">{{getGivenUrlopPrint(rowData.type)}}</td>
+        <td style="font-weight: bold;">{{getUsedUrlopPrint(rowData.type)}}</td>
+        <td style="font-weight: bold;">{{getDiffUrlopPrint(rowData.type)}}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-rowData let-rowIndex="rowIndex">
+      <tr>
+        <td style="border: 0;"></td>
+        <td [ngClass]="{'accepted': rowData.akceptacja.toString() > '0', 'pending': rowData.akceptacja.toString()==='0' && rowData.odrzucono.toString()==='0', 'denied': rowData.odrzucono.toString() > '0' }">
+          {{printZakres(rowData)}}
+          <span style="color: #FFB300;" *ngIf="rowData.typeTemp === 'nz'"> (NŻ)</span>
+          <span style="color: #FFB300;" *ngIf="rowData.typeTemp === 'godz'"> (Godz)</span>
+        </td>
+        <td>{{getWorkingDaysPrint( rowData.start, rowData.stop, rowData.type )}}</td>
+        <td style="text-align: center;">
+          <button pButton type="button" icon="pi pi-times" class="ui-button-warning" style="margin-right: .5em" *ngIf="rowData.odrzucono.toString()==='0' && logedUser.dostep.toString() == '1'" (click)="removeUrlop( rowData )"></button>
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" *ngIf="rowData.odrzucono.toString()==='0' && rowData.akceptacja.toString()==='0'" (click)="deleteUrlop( rowData )"></button>
+          <button pButton type="button" icon="pi pi-print" class="ui-button-success" *ngIf="rowData.akceptacja.toString()!=='0'" (click)="urlopToPdfDialog( rowData )"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <ul>
+    <li class="accepted">Zaakceptowany</li>
+    <li class="pending">Czeka na akceptację</li>
+    <li class="denied">Odrzucony</li>
+  </ul>
+</p-fieldset>
+
+<br />
+<p-fieldset *ngIf="logedUser.dostep.toString() == '1'" legend="Raporty urlopowe" [toggleable]="true">
+  <p-table>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Data od</th>
+        <th>Data do</th>
+        <th>Osoby</th>
+        <th></th>
+      </tr>
+      <tr>
+        <th><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="swietaDates" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="raport.start" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></th>
+        <th><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="swietaDates" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="raport.stop" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></th>
+        <th><p-multiSelect [style]="{'width':'100%', 'float':'right', 'margin-left':'1rem'}" [options]="profileSelectOptions" [(ngModel)]="raport.profil" placeholder="Wybierz osobę..."></p-multiSelect></th>
+        <th><button type="button" pButton icon="pi pi-file-excel" iconPos="left" label="EXCEL" (click)="urlopRaportToExcel()" style="margin-right: 0.5em;" class="ui-button-success"></button></th>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+<br />
+<p-fieldset legend="Nieobecności godzinowe" [toggleable]="true" [collapsed]=false>
+  <p-table #dt [columns]="cols" [value]="godzinowe" dataKey="id" editMode="row" [paginator]="true" [rows]="perPage">
+    <ng-template pTemplate="caption">
+      <div style="position: relative; min-height: 2.4em">
+        <div style="position: absolute; left: 0px; top: 0px;">
+          <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+          <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+          Rok: <p-dropdown [options]="lata" [(ngModel)]="rok" optionLabel="name" (onChange)="reloadZmianaRoku()"></p-dropdown>
+        </div>
+        <div *ngIf="logedUser.dostep.toString() == '1'" style="position: absolute; right: 0px; top: 0px;">
+          <p-dropdown [style]="{'width':'100%'}" [options]="profileSelectOptions" [(ngModel)]="profileSelected" [showClear]="true" (onChange)="reloadSumtable()" filter="true" *ngIf="logedUser.dostep.toString() == '1'"></p-dropdown>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="perPage" [min]="0" [step]="1" required></th>
+        <th>Data</th>
+        <th>Ilość godzin</th>
+        <th style="width:8em"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-editing="editing" let-ri="rowIndex">
+      <tr [pEditableRow]="rowData">
+        <td>{{ri+1}}</td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="swietaDates" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="rowData.data" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.data}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-spinner size="57" [inputStyle]="{'width':'100%'}" [(ngModel)]="rowData.iloscGodzin" [min]="0" [max]="100" [step]="0.25" placeholder="Ilość godzin"></p-spinner>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.iloscGodzin}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td style="text-align:center">
+          <button *ngIf="!editing && logedUser.dostep.toString() == '1'" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="ui-button-info" style="margin-right: .5em" (click)="onRowEditInitGodz(rowData)"></button>
+          <button *ngIf="!editing && logedUser.dostep.toString() == '1'" pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="onRowDeleteGodz(rowData)"></button>
+          <button *ngIf="editing && logedUser.dostep.toString() == '1'" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSaveGodz(rowData)"></button>
+          <button *ngIf="editing && logedUser.dostep.toString() == '1'" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="onRowEditCancelGodz(rowData, ri)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td>PODSUMOWANIE</td>
+        <td>Rozliczono: {{this.getUsedUrlop('godz') * 8}} godzin</td>
+        <td>Do rozliczenia: {{brakujaceGodzinowy()}} godzin</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="swietaDates" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="addGodzinowe.data" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+        <td><p-spinner size="57" [inputStyle]="{'width':'100%'}" [(ngModel)]="addGodzinowe.iloscGodzin" [min]="0" [max]="100" [step]="0.25" placeholder="Ilość godzin"></p-spinner></td>
+        <td style="text-align: center;"><button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="addGodzinowy()"></button></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+<br />
+<p-fieldset *ngIf="logedUser.dostep.toString() == '1'" legend="Przypisz ilość dni urlopowych" [toggleable]="true" [collapsed]=true>
+  <p-table #dt [columns]="cols" [value]="profiles" dataKey="id" editMode="row" [paginator]="true" [rows]="perPage">
+    <ng-template pTemplate="caption">
+      <div style="position: relative; min-height: 2.4em">
+        <div style="position: absolute; left: 0px; top: 0px;">
+          <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+          <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+          Rok: <p-dropdown [options]="lata" [(ngModel)]="rok" optionLabel="name" (onChange)="reloadZmianaRoku()"></p-dropdown>
+        </div>
+        <div class="ui-helper-clearfix" style="position: absolute; right: 0px; top: 0px;">
+          <button type="button" pButton icon="pi pi-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV()" style="margin-right: 0.5em;"></button>
+          <button type="button" pButton icon="pi pi-file-excel" iconPos="left" label="EXCEL" (click)="exportExcel()" style="margin-right: 0.5em;" class="ui-button-success"></button>
+          <button type="button" pButton icon="pi pi-file-pdf" iconPos="left" label="PDF" (click)="exportPdf()" class="ui-button-warning"></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th><input pInputText style="width: 50px;" type="number" [(ngModel)]="perPage" [min]="0" [step]="1" required></th>
+        <th *ngFor="let col of columns">
+          {{col.header}}
+        </th>
+        <th style="width:8em"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+      <tr [pEditableRow]="rowData">
+        <td>{{ri+1}}</td>
+        <td>
+          {{rowData.imie}}
+        </td>
+        <td>
+          {{rowData.nazwisko}}
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_nz" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_nz}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_odz" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_odz}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_zal" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_zal}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_swie" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_swie}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_wkon" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_wkon}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_opie" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_opie}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_ojc" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_ojc}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="number" style="width: 75px;" [(ngModel)]="rowData.urlop_zdal" [min]="0" required>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData.urlop_zdal}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          {{minToText( rowData.urlop_rozg )}}
+        </td>
+        <td style="text-align:center">
+          <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="ui-button-info" (click)="onRowEditInit(rowData)"></button>
+          <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+          <button *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times" class="ui-button-danger" (click)="onRowEditCancel(rowData, ri)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-fieldset>
+<br />
+<p-fieldset *ngIf="logedUser.dostep.toString() == '1'" legend="Rozliczenia godzin nadliczbowych" [toggleable]="true" [collapsed]=true>
+  <app-godziny-nadliczbowe></app-godziny-nadliczbowe>
+</p-fieldset>
+<p-dialog header="Komunikat" [(visible)]="displayDialog" [style]="{width: '50vw'}" [baseZIndex]="10000">
+  {{dialogText}}
+  <p-footer>
+    <button type="button" pButton icon="pi pi-times" (click)="displayDialog=false" label="Zamknij" class="ui-button-secondary"></button>
+  </p-footer>
+</p-dialog>
+<p-confirmDialog></p-confirmDialog>

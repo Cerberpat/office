@@ -1,0 +1,16 @@
+<div class="p-50 float-l">
+  <p-calendar [style]="{'width':'100%'}" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="raportDetails.dzien" [maxDate]="maxDate" [showIcon]="true" (onSelect)="sendDate()" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar>
+</div>
+<div class="p-50 float-l">
+  <p-spinner size="57" [inputStyle]="{'width':'100%'}" [(ngModel)]="raportDetails.iloscGodzin" [min]="0" [max]="100" [step]="0.25" placeholder="Ilość godzin"></p-spinner>
+</div>
+<div class="p-100 float-l mar-t-5">
+  <textarea style="width: 100%;" [(ngModel)]="raportDetails.opis" rows="5" cols="30" pInputTextarea placeholder="Opis"></textarea>
+</div>
+
+<div class="p-100 float-l" *ngIf="receivedEditId == undefined">
+  <button pButton type="button" label="Dodaj wpis" class="ui-button-raised ui-button-warning" (click)="addRaport()"></button>
+</div>
+<div class="p-100 float-l" *ngIf="receivedEditId > 0">
+  <button pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-warning" (click)="editRaport()"></button>
+</div>

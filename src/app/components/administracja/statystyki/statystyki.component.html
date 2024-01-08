@@ -1,0 +1,135 @@
+<div class="progress-spinner center" *ngIf="loading">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<p-table [value]="[]" [autoLayout]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th colspan="2">Firma</th>
+      <th colspan="4">Zakres dat <span style="color: red; font-width: bold;">*</span></th>
+    </tr>
+    <tr>
+      <td colspan="2"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="companies" [(ngModel)]="params.company" [showClear]="false" optionValue="id" optionLabel="name" filter="false"></p-dropdown></td>
+      <td colspan="2"><p-calendar [style]="{'width':'100%'}" [locale]="locale" appendTo="body" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="params.dateStart" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+      <td colspan="2"><p-calendar [style]="{'width':'100%'}" [locale]="locale" appendTo="body" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="params.dateStop" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+    </tr>
+    <tr>
+      <th colspan="2">Oś X <span style="color: red; font-width: bold;">*</span></th>
+      <th colspan="2">Oś X (zawężenie)</th>
+      <th colspan="2">Oś Y <span style="color: red; font-width: bold;">*</span></th>
+    </tr>
+    <tr>
+      <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="optionsX" [(ngModel)]="params.osx" (onChange)="refreshOptions()" [showClear]="true" optionValue="value" optionLabel="label" filter="true"></p-dropdown></td>
+      <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="direction" [(ngModel)]="params.osxSort" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+      <td><p-dropdown *ngIf="params.osx.value!==''" appendTo="body" [style]="{'width':'100%'}" [options]="optionsX2" [(ngModel)]="params.osx2" (onChange)="refreshOptions()" [showClear]="true" optionValue="value" optionLabel="label" filter="true"></p-dropdown></td>
+      <td><p-dropdown *ngIf="params.osx.value!==''" appendTo="body" [style]="{'width':'100%'}" [options]="direction" [(ngModel)]="params.osx2Sort" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+      <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="optionsY" [(ngModel)]="params.osy" (onChange)="refreshOptions()" [showClear]="true" optionValue="value" optionLabel="label" filter="true"></p-dropdown></td>
+      <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="direction" [(ngModel)]="params.osySort" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="center" *ngIf="osAdd.x===0"></td>
+      <th colspan="2" class="center" *ngIf="osAdd.x>0">Filtruj Oś X</th>
+      <td colspan="2" class="center" *ngIf="osAdd.x2===0"></td>
+      <th colspan="2" class="center" *ngIf="osAdd.x2>0">Filtruj Oś X (zawężenie)</th>
+      <td colspan="2" class="center" *ngIf="osAdd.y===0"></td>
+      <th colspan="2" class="center" *ngIf="osAdd.y>0">Filtruj Oś Y</th>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <p-multiSelect *ngIf="osAdd.x===1" appendTo="body" [style]="{'width':'100%'}" [options]="addOpt.x" [(ngModel)]="params.addx" optionLabel="name" optionValue="id"></p-multiSelect>
+        <input *ngIf="osAdd.x===2" pInputText [style]="{'width':'100%'}" type="text" [min]="0" [step]="1" [(ngModel)]="params.addx">
+      </td>
+      <td colspan="2">
+        <p-multiSelect *ngIf="osAdd.x2===1" appendTo="body" [style]="{'width':'100%'}" [options]="addOpt.x2" [(ngModel)]="params.addx2" optionLabel="name" optionValue="id"></p-multiSelect>
+        <input *ngIf="osAdd.x2===2" pInputText [style]="{'width':'100%'}" type="text" [min]="0" [step]="1" [(ngModel)]="params.addx2">
+      </td>
+      <td colspan="2">
+        <p-multiSelect *ngIf="osAdd.y===1" appendTo="body" [style]="{'width':'100%'}" [options]="addOpt.y" [(ngModel)]="params.addy" optionLabel="name" optionValue="id"></p-multiSelect>
+        <input *ngIf="osAdd.y===2" pInputText [style]="{'width':'100%'}" type="text" [min]="0" [step]="1" [(ngModel)]="params.addy">
+      </td>
+    </tr>
+    <tr>
+      <th>Typ wyświetlanej wartości</th>
+      <th>Jężyk</th>
+      <th colspan="2">Pokazuj puste wiersze/kolumny</th>
+      <th colspan="2" *ngIf="params.printValue.value===2">Przelicz waluty</th>
+    </tr>
+    <tr>
+      <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="printValue" [(ngModel)]="params.printValue" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+      <td><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="languages" [(ngModel)]="params.language" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+      <td colspan="2"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="empty" [(ngModel)]="params.empty" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+      <td colspan="2" *ngIf="params.printValue.value===2"><p-dropdown appendTo="body" [style]="{'width':'100%'}" [options]="exchange" [(ngModel)]="params.exchange" [showClear]="false" optionValue="value" optionLabel="label" filter="false"></p-dropdown></td>
+    </tr>
+    <tr>
+      <th colspan="6" style="padding: 15px;">
+        <button *ngIf="!this.loading" style="width: 100%;" pButton type="button" label="Generuj dane" icon="pi pi-search" class="ui-button-raised ui-button-success" (click)="getData()"></button>
+        <button *ngIf="this.loading" style="width: 100%;" pButton type="button" label="Generuj dane" class="p-button-secondary"></button>
+      </th>
+    </tr>
+  </ng-template>
+</p-table>
+
+
+<p-table *ngIf="this.printData.length > 0" #dt [columns]="cols" [value]="printData" selectionMode="multiple" [(selection)]="selectedProducts" responsiveLayout="scroll" [tableStyle]="{ width: 'max-content'}">
+  <ng-template pTemplate="caption">
+    <div class="flex">
+      <button type="button" pButton pRipple style="margin-right: 10px;" icon="pi pi-file" (click)="dt.exportCSV()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+      <button type="button" pButton pRipple style="margin-right: 10px;" icon="pi pi-filter" (click)="dt.exportCSV({selectionOnly:true})" class="p-button-info ml-auto" pTooltip="CSV selection Only" tooltipPosition="bottom"></button>
+      <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()" class="p-button-success mr-2"  pTooltip="XLS" tooltipPosition="bottom"></button>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <ng-container *ngIf="params.printValue.value===1">
+        <ng-container *ngFor="let col of columns">
+          <th pSortableColumn="{{col.field}}">
+            {{col.header}} <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="params.printValue.value===2">
+        <ng-container *ngFor="let col of columns">
+          <th colspan="2" pSortableColumn="{{col.field}}">
+            {{col.header}} <p-sortIcon field="{{col.field}}"></p-sortIcon>
+          </th>
+        </ng-container>
+      </ng-container>
+      <th pSortableColumn="total">
+        Total <p-sortIcon field="total"></p-sortIcon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <ng-container *ngIf="params.printValue.value===1">
+      <tr [pSelectableRow]="rowData">
+        <td *ngFor="let col of columns">
+          {{rowData[col.field]}}
+        </td>
+        <td>
+          {{rowData['total']}}
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="params.printValue.value===2">
+      <tr [pSelectableRow]="rowData">
+        <ng-container *ngFor="let col of columns">
+          <ng-container *ngIf="col.field.includes('valueAmounts')">
+            <td>
+              {{rowData[col.field]!==undefined ? rowData[col.field].toString().replace('.',',') : '0' }}
+            </td>
+            <td>
+              {{rowData.curr!==undefined ? rowData.curr : ''}}
+            </td>
+          </ng-container>
+          <ng-container *ngIf="!col.field.includes('valueAmounts')">
+            <td colspan="2">
+              {{rowData[col.field]}}
+            </td>
+          </ng-container>
+        </ng-container>
+        <td class="bold">
+          {{rowData['total'].toString().replace('.',',')}}
+        </td>
+      </tr>
+    </ng-container>
+  </ng-template>
+</p-table>

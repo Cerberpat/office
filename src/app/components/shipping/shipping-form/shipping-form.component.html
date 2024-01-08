@@ -1,0 +1,58 @@
+<p-toast></p-toast>
+<div style="min-height: 79vh;">
+  <p-tabView>
+    <p-tabPanel header="Dane ogólne" leftIcon="pi pi-id-card" headerStyleClass="dane-ogolne">
+      <p-table [value]="[shipping]" [autoLayout]="true">
+        <ng-template pTemplate="body"  let-rec>
+          <tr>
+            <th colspan="4" class="bold center belka">Dane ogólne</th>
+          </tr>
+          <tr>
+            <td class="bold right">Data dostawy</td>
+            <td><p-calendar [style]="{'width':'100%'}" [locale]="es" [disabledDays]="[0,6]" [disabledDates]="[]" firstDayOfWeek="1" [inputStyle]="{'width':'calc(100% - 33px)'}" [(ngModel)]="shipping.deliveryDate" [showTime]="false" [showIcon]="true" [defaultDate]="" dateFormat="yy-mm-dd" placeholder="Data"></p-calendar></td>
+          </tr>
+          <tr>
+            <td class="bold right">Tytuł</td>
+            <td><input pInputText id="title" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('title')"
+                       [(ngModel)]="shipping.title"
+                       [pTooltip]="getErrorMessage('title')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr>
+            <td class="bold right">Firma</td>
+            <td><p-dropdown *ngIf="companies.length > 0" appendTo="body" id="companyId" [style]="{'width':'100%'}" filter="true" [showClear]="true"
+                            placeholder="Wybierz firmę"
+                            (onChange)="validField('companyId')"
+                            [options]="companies"
+                            [(ngModel)]="shipping.companyId"
+                            [pTooltip]="getErrorMessage('companyId')" tooltipStyleClass="form-error" tooltipPosition="top"></p-dropdown></td>
+          </tr>
+          <tr>
+            <td class="bold right">Uwagi</td>
+            <td><input pInputText id="shippingComment" [style]="{'width':'100%'}" type="text" [min]="0" [step]="1"
+                       (keyup)="validField('shippingComment')"
+                       [(ngModel)]="shipping.comment"
+                       [pTooltip]="getErrorMessage('shippingComment')" tooltipStyleClass="form-error" tooltipPosition="top"></td>
+          </tr>
+          <tr *ngIf="saveDisplay > 0">
+            <td colspan="4" class="bold center belka">
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 1" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-success" (click)="saveChanges( shipping )"></button>
+              <button style="width: 100%; margin-top: 15px;" *ngIf="saveDisplay === 2" pButton type="button" label="Zapisz zmiany" class="ui-button-raised ui-button-warning"></button>
+            </td>
+          </tr>
+          <tr *ngIf="shipping.id > 0">
+            <td colspan="4" class="bold center belka">
+              <app-shipping-positions [shipping]="shipping"></app-shipping-positions>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="Komentarze" leftIcon="pi pi-id-card" headerStyleClass="komentarze">
+      <app-historia [source]="source" [sourceId]="sourceId"></app-historia>
+    </p-tabPanel>
+    <p-tabPanel header="Załączniki" leftIcon="pi pi-id-card" headerStyleClass="zalaczniki">
+      <app-pliki [source]="source" [sourceId]="sourceId"></app-pliki>
+    </p-tabPanel>
+  </p-tabView>
+</div>

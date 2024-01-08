@@ -1,0 +1,17 @@
+<p-table [value]="[{}]">
+  <ng-template pTemplate="body">
+    <tr>
+      <th style="text-align: right; padding: 5px; width: 30%;">Podaj hasło: </th>
+      <td><input pInputText style="width: 100%;" type="password" [(ngModel)]="this.reset.pierwsze" required></td>
+    </tr>
+    <tr>
+      <th style="text-align: right; padding: 5px;">Powtórz hasło: </th>
+      <td><input pInputText style="width: 100%;" type="password" [(ngModel)]="this.reset.drugie" required></td>
+    </tr>
+    <tr>
+      <th style="padding: 5px;"></th>
+      <td><button pButton style="width: 100%;" label="Zapisz" type="button" class="ui-button-success" (click)="zapisz()"></button></td>
+    </tr>
+  </ng-template>
+</p-table>
+

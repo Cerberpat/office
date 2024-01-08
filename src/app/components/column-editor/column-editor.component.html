@@ -1,0 +1,13 @@
+<p-pickList [source]="list1" [target]="list2" sourceHeader="Dostępne" targetHeader="Wybrane" [dragdrop]="true"
+            [responsive]="true" [sourceStyle]="{'height':'30rem'}" [targetStyle]="{'height':'30rem'}" filterBy="header"
+            sourceFilterPlaceholder="Szukaj po nazwie" targetFilterPlaceholder="Szukaj po nazwie"
+            (onMoveToSource)="checkZapisz()" (onMoveToTarget)="checkZapisz()">
+  <ng-template let-product pTemplate="item">
+    <div class="product-item">
+      {{product.header}} <i class="pi pi-info-circle" [pTooltip]="product.comment" *ngIf="product.comment !== undefined && product.comment.length > 0"></i>
+    </div>
+  </ng-template>
+</p-pickList>
+<br />
+<button style="width: 100%;" *ngIf="saveDisplay === 1" pButton type="button" label="Zapisz wybrane kolumny" class="ui-button-raised ui-button-success" (click)="saveColumns();"></button>
+<br /><br />
